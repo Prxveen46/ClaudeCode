@@ -482,6 +482,13 @@
     @keyframes drawLine {
       to { stroke-dashoffset: 0; }
     }
+    .project-card.visible .mock-spark svg circle {
+      animation: dotFade 0.3s ease forwards;
+      animation-delay: 1.25s;
+    }
+    @keyframes dotFade {
+      to { opacity: 1; }
+    }
 
     /* ── EDUCATION ── */
     .edu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 0; }
