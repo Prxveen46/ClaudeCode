@@ -384,6 +384,105 @@
       letter-spacing: 0.04em;
     }
 
+    /* ── CARD MOCKUP ── */
+    .card-mockup {
+      background: #050505;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      margin: -2rem -2rem 1.75rem -2rem;
+      overflow: hidden;
+    }
+    .mock-chrome {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.55rem 0.85rem;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      background: rgba(255,255,255,0.015);
+    }
+    .mock-dots { display: flex; gap: 4px; }
+    .mock-dots span {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      opacity: 0.8;
+    }
+    .mock-dots span:nth-child(1) { background: #ff5f57; }
+    .mock-dots span:nth-child(2) { background: #febc2e; }
+    .mock-dots span:nth-child(3) { background: #28c840; }
+    .mock-chrome-label {
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      color: var(--text-muted);
+      letter-spacing: 0.06em;
+    }
+    .mock-body { padding: 0.8rem 0.85rem 0.85rem; }
+    .mock-kpis { display: flex; gap: 0.4rem; margin-bottom: 0.75rem; }
+    .mock-kpi {
+      flex: 1;
+      border: 1px solid rgba(255,255,255,0.05);
+      padding: 0.45rem 0.5rem;
+      background: rgba(255,255,255,0.02);
+    }
+    .mock-kpi-value {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--accent);
+      line-height: 1;
+      margin-bottom: 0.2rem;
+    }
+    .mock-kpi-label {
+      font-family: var(--font-mono);
+      font-size: 0.56rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .mock-charts {
+      display: flex;
+      gap: 0.5rem;
+      height: 52px;
+      align-items: flex-end;
+    }
+    .mock-bars { flex: 3; height: 100%; }
+    .mock-bars svg { width: 100%; height: 100%; display: block; }
+    .mock-spark { flex: 2; height: 100%; }
+    .mock-spark svg { width: 100%; height: 100%; display: block; }
+
+    /* Bar grow animation — triggered by .visible on parent card */
+    .mock-bar {
+      transform-box: fill-box;
+      transform-origin: 50% 100%;
+      transform: scaleY(0);
+    }
+    .project-card.visible .mock-bar {
+      animation: growBar 0.45s ease forwards;
+    }
+    .project-card.visible .mock-bar:nth-child(1) { animation-delay: 0.05s; }
+    .project-card.visible .mock-bar:nth-child(2) { animation-delay: 0.10s; }
+    .project-card.visible .mock-bar:nth-child(3) { animation-delay: 0.15s; }
+    .project-card.visible .mock-bar:nth-child(4) { animation-delay: 0.20s; }
+    .project-card.visible .mock-bar:nth-child(5) { animation-delay: 0.25s; }
+    .project-card.visible .mock-bar:nth-child(6) { animation-delay: 0.30s; }
+    .project-card.visible .mock-bar:nth-child(7) { animation-delay: 0.35s; }
+    .project-card.visible .mock-bar:nth-child(8) { animation-delay: 0.40s; }
+    @keyframes growBar {
+      from { transform: scaleY(0); }
+      to   { transform: scaleY(1); }
+    }
+
+    /* Sparkline draw animation */
+    .mock-spark-line {
+      stroke-dasharray: 220;
+      stroke-dashoffset: 220;
+    }
+    .project-card.visible .mock-spark-line {
+      animation: drawLine 0.9s ease forwards;
+      animation-delay: 0.35s;
+    }
+    @keyframes drawLine {
+      to { stroke-dashoffset: 0; }
+    }
+
     /* ── EDUCATION ── */
     .edu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 0; }
     .edu-card { padding: 2rem; }
