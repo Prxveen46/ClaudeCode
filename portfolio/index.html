@@ -491,7 +491,7 @@
 </head>
 <body>
 
-  <canvas id="bg-canvas"></canvas>
+  <canvas id="bg-canvas" aria-hidden="true"></canvas>
 
   <!-- NAV -->
   <nav id="nav">
@@ -862,17 +862,17 @@
           <form class="form-grid" onsubmit="handleFormSubmit(event)">
             <div class="form-row">
               <div class="field-group">
-                <label class="field-label">Name</label>
-                <input type="text" class="field-input" placeholder="Your full name" required>
+                <label class="field-label" for="field-name">Name</label>
+                <input id="field-name" type="text" class="field-input" placeholder="Your full name" required>
               </div>
               <div class="field-group">
-                <label class="field-label">Email</label>
-                <input type="email" class="field-input" placeholder="your@email.com" required>
+                <label class="field-label" for="field-email">Email</label>
+                <input id="field-email" type="email" class="field-input" placeholder="your@email.com" required>
               </div>
             </div>
             <div class="field-group">
-              <label class="field-label">Message</label>
-              <textarea class="field-textarea" placeholder="Tell me about your project or opportunity..." required></textarea>
+              <label class="field-label" for="field-message">Message</label>
+              <textarea id="field-message" class="field-textarea" placeholder="Tell me about your project or opportunity..." required></textarea>
             </div>
             <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;padding:1rem;">
               Send Message →
@@ -1015,7 +1015,7 @@
     });
 
     // ── FORM ──
-    function handleFormSubmit(e) {
+    window.handleFormSubmit = function(e) {
       e.preventDefault();
       e.target.innerHTML = '<p style="color:var(--accent);font-family:var(--font-mono);font-size:0.875rem;padding:2rem 0;text-align:center;letter-spacing:0.05em;">✓ MESSAGE RECEIVED — I\'ll be in touch soon.</p>';
     }
