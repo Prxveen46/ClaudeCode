@@ -123,16 +123,48 @@
     }
     .glass-card:hover { border-color: rgba(194,164,255,0.2); }
 
-    /* ── REVEAL ── */
-    .reveal {
+    /* ── REVEAL ANIMATION SYSTEM ── */
+    [data-reveal] {
       opacity: 0;
-      transform: translateY(24px);
-      transition: opacity 0.6s ease, transform 0.6s ease;
+      will-change: transform, opacity;
+      transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+                  transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
     }
+    [data-reveal="up"]    { transform: translateY(40px); }
+    [data-reveal="down"]  { transform: translateY(-40px); }
+    [data-reveal="left"]  { transform: translateX(-60px); }
+    [data-reveal="right"] { transform: translateX(60px); }
+    [data-reveal="scale"] { transform: scale(0.85); }
+    [data-reveal].revealed {
+      opacity: 1;
+      transform: translate(0) scale(1);
+    }
+    [data-stagger="1"] { transition-delay: 0.1s; }
+    [data-stagger="2"] { transition-delay: 0.2s; }
+    [data-stagger="3"] { transition-delay: 0.3s; }
+    [data-stagger="4"] { transition-delay: 0.4s; }
+    [data-stagger="5"] { transition-delay: 0.5s; }
+    [data-stagger="6"] { transition-delay: 0.6s; }
+    [data-stagger="7"] { transition-delay: 0.7s; }
+    [data-stagger="8"] { transition-delay: 0.8s; }
+
+    /* Word-by-word reveal */
+    .word-reveal .word {
+      display: inline-block;
+      opacity: 0;
+      transform: translateY(12px) rotateX(20deg);
+      transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+                  transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+      margin-right: 0.25em;
+    }
+    .word-reveal.revealed .word {
+      opacity: 1;
+      transform: translateY(0) rotateX(0);
+    }
+
+    /* Keep old .reveal for backward compat with project card .visible */
+    .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.6s ease, transform 0.6s ease; }
     .reveal.visible { opacity: 1; transform: translateY(0); }
-    .reveal-d1 { transition-delay: 0.1s; }
-    .reveal-d2 { transition-delay: 0.2s; }
-    .reveal-d3 { transition-delay: 0.3s; }
 
     /* ── NAV ── */
     #nav {
@@ -261,47 +293,97 @@
     }
 
     /* ── SKILLS ── */
-    .skills-list { display: flex; flex-direction: column; }
-    .skill-row {
-      display: grid;
-      grid-template-columns: 220px 1fr;
-      align-items: center;
-      gap: 2rem;
+    .skills-container {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      min-height: 480px;
+    }
+    .skill-card {
+      flex: 1;
+      min-height: 60px;
       padding: 1.25rem 1.5rem;
-      border: 1px solid var(--border);
-      border-top: none;
-      transition: background var(--transition);
+      border: 1px dashed var(--border-hover);
+      border-radius: 12px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: flex 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+                  border-color 0.3s ease,
+                  box-shadow 0.3s ease;
       position: relative;
     }
-    .skill-row:first-child { border-top: 1px solid var(--border); }
-    .skill-row::before {
-      content: '';
-      position: absolute;
-      left: 0; top: 0; bottom: 0;
-      width: 2px;
-      background: var(--accent);
-      transform: scaleY(0);
-      transition: transform var(--transition);
+    .skill-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
     }
-    .skill-row:hover::before { transform: scaleY(1); }
-    .skill-row:hover { background: rgba(194,164,255,0.03); }
-    .skill-cat {
+    .skill-card-title {
       font-family: var(--font-mono);
-      font-size: 0.75rem;
-      letter-spacing: 0.05em;
+      font-size: 0.8rem;
+      letter-spacing: 0.08em;
       color: var(--text-secondary);
       text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
     }
-    .skill-pills { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+    .skill-card-icon { font-size: 1.2rem; }
+    .skill-card-chevron {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .skill-card.active .skill-card-chevron { transform: rotate(180deg); }
+    .skill-card.active {
+      flex: 4;
+      border-style: solid;
+      border-color: var(--accent);
+      box-shadow: 0 0 30px var(--accent-dim), inset 0 1px 0 rgba(194,164,255,0.1);
+    }
+    .skill-card .skill-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 1rem;
+      opacity: 0;
+      max-height: 0;
+      overflow: hidden;
+      transition: opacity 0.3s ease 0.15s, max-height 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .skill-card.active .skill-pills {
+      opacity: 1;
+      max-height: 200px;
+    }
     .pill {
       font-size: 0.78rem;
       padding: 0.3rem 0.8rem;
       border: 1px solid var(--border);
       color: var(--text-secondary);
+      border-radius: 4px;
       transition: var(--transition);
       cursor: default;
     }
     .pill:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
+    .skill-card::before,
+    .skill-card::after {
+      content: '';
+      position: absolute;
+      width: 6px;
+      height: 6px;
+      background: var(--accent);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    .skill-card::before { top: 8px; left: 8px; }
+    .skill-card::after { bottom: 8px; right: 8px; }
+    .skill-card.active::before,
+    .skill-card.active::after { opacity: 1; }
+
+    @media (max-width: 900px) {
+      .skills-container { min-height: auto; }
+      .skill-card { min-height: auto; }
+    }
 
     /* ── TIMELINE ── */
     .timeline { position: relative; padding-left: 2rem; }
@@ -809,18 +891,18 @@
   <!-- ABOUT -->
   <section id="about">
     <div class="container">
-      <div class="reveal">
-        <div class="section-line"></div>
-        <div class="eyebrow">About</div>
-        <h2 class="section-title">Turning Data<br>Into Decisions</h2>
+      <div>
+        <div class="section-line" data-reveal="left"></div>
+        <div class="eyebrow" data-reveal="up" data-stagger="1">About</div>
+        <h2 class="section-title" data-reveal="up" data-stagger="2">Turning Data<br>Into Decisions</h2>
       </div>
-      <div class="about-layout reveal reveal-d1">
+      <div class="about-layout">
         <div class="about-text">
           <p>I'm a results-driven Senior Data Analyst based in <strong>Bengaluru</strong> with 9+ years spanning Marketing Analytics, Business Intelligence, and Information Technology.</p>
           <p>Specializing in <strong>SQL, Snowflake, Tableau, Power BI, and Python</strong> — with deep expertise in digital marketing analytics, customer segmentation, behavior modeling, and campaign optimization.</p>
           <p>Across enterprise clients like <strong>Microsoft, Amazon, Nike, and Audi</strong>, I've engineered automated data pipelines, built interactive dashboards, and delivered insights that drive measurable revenue growth.</p>
         </div>
-        <div class="about-stats">
+        <div class="about-stats" data-reveal="right" data-stagger="3">
           <div class="stat-box">
             <div class="stat-num">9<span>+</span></div>
             <div class="stat-label">Years Experience</div>
@@ -916,15 +998,15 @@
   <!-- EXPERIENCE -->
   <section id="experience">
     <div class="container">
-      <div class="reveal">
-        <div class="section-line"></div>
-        <div class="eyebrow">Experience</div>
-        <h2 class="section-title">Career Journey</h2>
+      <div>
+        <div class="section-line" data-reveal="left"></div>
+        <div class="eyebrow" data-reveal="up" data-stagger="1">Experience</div>
+        <h2 class="section-title" data-reveal="up" data-stagger="2">Career Journey</h2>
       </div>
       <div class="timeline">
         <div class="tl-line"></div>
 
-        <div class="job-card glass-card reveal">
+        <div class="job-card glass-card" data-reveal="left" data-stagger="3">
           <div class="tl-dot"></div>
           <div class="job-header">
             <div>
@@ -942,7 +1024,7 @@
           </ul>
         </div>
 
-        <div class="job-card glass-card reveal">
+        <div class="job-card glass-card" data-reveal="left" data-stagger="4">
           <div class="tl-dot"></div>
           <div class="job-header">
             <div>
@@ -960,7 +1042,7 @@
           </ul>
         </div>
 
-        <div class="job-card glass-card reveal">
+        <div class="job-card glass-card" data-reveal="left" data-stagger="5">
           <div class="tl-dot"></div>
           <div class="job-header">
             <div>
@@ -976,7 +1058,7 @@
           </ul>
         </div>
 
-        <div class="job-card glass-card reveal">
+        <div class="job-card glass-card" data-reveal="left" data-stagger="6">
           <div class="tl-dot"></div>
           <div class="job-header">
             <div>
@@ -1194,12 +1276,12 @@
   <!-- EDUCATION -->
   <section id="education">
     <div class="container">
-      <div class="reveal">
-        <div class="section-line"></div>
-        <div class="eyebrow">Education &amp; Certifications</div>
-        <h2 class="section-title">Academic Background</h2>
+      <div>
+        <div class="section-line" data-reveal="left"></div>
+        <div class="eyebrow" data-reveal="up" data-stagger="1">Education &amp; Certifications</div>
+        <h2 class="section-title" data-reveal="up" data-stagger="2">Academic Background</h2>
       </div>
-      <div class="edu-grid reveal reveal-d1">
+      <div class="edu-grid" data-reveal="scale" data-stagger="3">
         <div class="glass-card edu-card">
           <div class="edu-degree">MBA</div>
           <h3>Master of Business Administration</h3>
@@ -1213,7 +1295,7 @@
           <div class="edu-year">April 2016</div>
         </div>
       </div>
-      <div class="reveal reveal-d2" style="margin-top:3rem">
+      <div data-reveal="scale" data-stagger="4" style="margin-top:3rem">
         <div class="eyebrow">Certifications</div>
         <div class="cert-grid">
           <div class="glass-card cert-card">
@@ -1252,12 +1334,12 @@
   <!-- CONTACT -->
   <section id="contact">
     <div class="container">
-      <div class="reveal">
-        <div class="section-line"></div>
-        <div class="eyebrow">Let's Connect</div>
-        <h2 class="section-title">Get In Touch</h2>
+      <div>
+        <div class="section-line" data-reveal="left"></div>
+        <div class="eyebrow" data-reveal="up" data-stagger="1">Let's Connect</div>
+        <h2 class="section-title" data-reveal="up" data-stagger="2">Get In Touch</h2>
       </div>
-      <div class="contact-layout reveal reveal-d1">
+      <div class="contact-layout" data-reveal="up" data-stagger="3">
         <div class="contact-info">
           <p class="contact-intro">Whether you're looking for a Senior Data Analyst, need analytics consulting, or want to discuss a project — I'd love to hear from you.</p>
           <div class="contact-links">
@@ -1480,11 +1562,42 @@
       navLinks.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + current));
     });
 
-    // ── SCROLL REVEAL ──
-    const revealObs = new IntersectionObserver(entries => {
-      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); revealObs.unobserve(e.target); } });
+    // ── ENHANCED SCROLL REVEAL ──
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('revealed');
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.15, rootMargin: '0px 0px -50px 0px' });
+    document.querySelectorAll('[data-reveal]').forEach(el => revealObserver.observe(el));
+
+    // Keep old observer for project card .visible (bar animations)
+    const visibleObs = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); visibleObs.unobserve(e.target); } });
     }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
-    document.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
+    document.querySelectorAll('.reveal').forEach(el => visibleObs.observe(el));
+
+    // Word-by-word split for About paragraphs
+    document.querySelectorAll('.about-text p').forEach(p => {
+      const text = p.innerHTML;
+      const parts = text.split(/(\s+|<[^>]+>)/);
+      p.innerHTML = '';
+      let wordIndex = 0;
+      parts.forEach(part => {
+        if (part.match(/^<[^>]+>$/)) {
+          p.innerHTML += part;
+        } else if (part.match(/^\s+$/)) {
+          p.innerHTML += ' ';
+        } else if (part.trim()) {
+          p.innerHTML += `<span class="word" style="transition-delay:${wordIndex * 0.03}s">${part}</span> `;
+          wordIndex++;
+        }
+      });
+      p.classList.add('word-reveal');
+      revealObserver.observe(p);
+    });
 
     // ── 3D CARD TILT ──
     document.querySelectorAll('.project-card, .cert-card').forEach(card => {
