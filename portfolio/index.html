@@ -593,9 +593,22 @@
       .hero { padding-top: 5rem; }
       .about-stats { grid-template-columns: 1fr 1fr; }
     }
+    /* ── SCROLL PROGRESS ── */
+    #progress-bar {
+      position: fixed;
+      top: 0; left: 0;
+      height: 3px;
+      width: 0%;
+      background: var(--accent);
+      z-index: 1000;
+      pointer-events: none;
+      transition: width 0.08s linear;
+    }
   </style>
 </head>
 <body>
+
+  <div id="progress-bar" aria-hidden="true"></div>
 
   <canvas id="bg-canvas" aria-hidden="true"></canvas>
 
@@ -1275,6 +1288,15 @@
       e.preventDefault();
       e.target.innerHTML = '<p style="color:var(--accent);font-family:var(--font-mono);font-size:0.875rem;padding:2rem 0;text-align:center;letter-spacing:0.05em;">✓ MESSAGE RECEIVED — I\'ll be in touch soon.</p>';
     }
+
+    // ── SCROLL PROGRESS ──
+    (function() {
+      const bar = document.getElementById('progress-bar');
+      window.addEventListener('scroll', () => {
+        const pct = window.scrollY / (document.body.scrollHeight - window.innerHeight) * 100;
+        bar.style.width = Math.min(pct, 100) + '%';
+      }, { passive: true });
+    })();
   </script>
 </body>
 </html>
