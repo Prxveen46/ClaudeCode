@@ -97,7 +97,10 @@
       text-transform: uppercase;
       cursor: pointer;
       border: none;
-      transition: var(--transition);
+      transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1),
+                  background 0.25s ease,
+                  border-color 0.25s ease,
+                  color 0.25s ease;
     }
     .btn-primary { background: var(--accent); color: #080808; font-weight: 700; }
     .btn-primary:hover { background: #fff; }
@@ -1513,6 +1516,22 @@
       setTimeout(() => desc.classList.add('reveal-hero'), 500);
       setTimeout(() => meta.classList.add('reveal-hero'), 700);
       setTimeout(() => actions.classList.add('reveal-hero'), 900);
+    })();
+
+    // ── MAGNETIC BUTTONS ──
+    (function() {
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      document.querySelectorAll('.btn').forEach(btn => {
+        btn.addEventListener('mousemove', e => {
+          const r = btn.getBoundingClientRect();
+          const x = (e.clientX - (r.left + r.width  / 2)) * 0.35;
+          const y = (e.clientY - (r.top  + r.height / 2)) * 0.35;
+          btn.style.transform = `translate(${x}px, ${y}px)`;
+        });
+        btn.addEventListener('mouseleave', () => {
+          btn.style.transform = '';
+        });
+      });
     })();
   </script>
 </body>
