@@ -8,6 +8,12 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800&family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.134.0/examples/js/postprocessing/EffectComposer.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.134.0/examples/js/postprocessing/RenderPass.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.134.0/examples/js/shaders/CopyShader.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.134.0/examples/js/postprocessing/ShaderPass.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.134.0/examples/js/shaders/LuminosityHighPassShader.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.134.0/examples/js/postprocessing/UnrealBloomPass.js"></script>
   <style>
     /* ── RESET ── */
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
@@ -51,6 +57,7 @@
       width: 100%; height: 100%;
       z-index: 0;
       pointer-events: none;
+      filter: brightness(1.1) contrast(1.05);
     }
 
     /* ── LAYOUT ── */
@@ -228,7 +235,7 @@
     }
     .hero-inner {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: 1fr;
       align-items: center;
       gap: 4rem;
     }
@@ -263,23 +270,6 @@
       50% { box-shadow: 0 0 0 6px rgba(194,164,255,0); }
     }
     .hero-actions { display: flex; gap: 1rem; flex-wrap: wrap; }
-    .hero-sphere-hint {
-      width: 100%;
-      height: 400px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      position: relative;
-    }
-    .hero-sphere-hint::after {
-      content: '';
-      position: absolute;
-      width: 340px; height: 340px;
-      border-radius: 50%;
-      background: radial-gradient(circle, rgba(194,164,255,0.08) 0%, transparent 70%);
-      pointer-events: none;
-    }
-
     /* ── ABOUT ── */
     .about-layout {
       display: grid;
@@ -950,7 +940,6 @@
       h1 { font-size: 3rem; }
       .section-heading-large { font-size: clamp(2rem, 5vw, 3rem); letter-spacing: 0.1em; }
       .hero-inner { grid-template-columns: 1fr; }
-      .hero-sphere-hint { height: 200px; }
       .about-layout { grid-template-columns: 1fr; gap: 3rem; }
       #projects { height: auto; padding: 4rem 0; }
       .projects-sticky { position: relative; height: auto; overflow: visible; }
@@ -1202,7 +1191,6 @@
           <a href="#experience" class="btn btn-ghost">View Experience</a>
         </div>
       </div>
-      <div class="hero-sphere-hint" aria-hidden="true"></div>
     </div>
   </section>
 
@@ -1714,160 +1702,296 @@
   </footer>
 
   <script>
-    // ── THREE.JS SCENE ──
+    // ── THREE.JS SPACE SCENE ──
     try { (function() {
       const canvas = document.getElementById('bg-canvas');
       const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
       renderer.setSize(window.innerWidth, window.innerHeight);
       renderer.toneMapping = THREE.ACESFilmicToneMapping;
-      renderer.toneMappingExposure = 1.0;
+      renderer.toneMappingExposure = 0.5;
 
       const scene = new THREE.Scene();
-      const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
-      camera.position.z = 5;
+      scene.fog = new THREE.FogExp2(0x000000, 0.00025);
 
-      // ── ENVIRONMENT MAP (for glass refraction) ──
-      const pmremGenerator = new THREE.PMREMGenerator(renderer);
+      const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 2000);
+      camera.position.set(0, 20, 100);
 
-      const envScene = new THREE.Scene();
-      envScene.add(new THREE.AmbientLight(0x111111));
-      const envLight1 = new THREE.DirectionalLight(0xc2a4ff, 0.8);
-      envLight1.position.set(2, 3, 2);
-      envScene.add(envLight1);
-      const envLight2 = new THREE.DirectionalLight(0x1a1a2e, 0.4);
-      envLight2.position.set(-2, -1, -2);
-      envScene.add(envLight2);
-      envScene.add(new THREE.Mesh(
-        new THREE.IcosahedronGeometry(1, 1),
-        new THREE.MeshStandardMaterial({ color: 0x080808 })
-      ));
-      const envMap = pmremGenerator.fromScene(envScene, 0, 0.1, 100).texture;
-      scene.environment = envMap;
-      pmremGenerator.dispose();
-      envScene.traverse(obj => {
-        if (obj.geometry) obj.geometry.dispose();
-        if (obj.material) obj.material.dispose();
-      });
-
-      // ── LIGHTING ──
-      scene.add(new THREE.AmbientLight(0xffffff, 0.3));
-      const keyLight = new THREE.DirectionalLight(0xc2a4ff, 0.6);
-      keyLight.position.set(2, 3, 2);
-      scene.add(keyLight);
-      const rimLight = new THREE.PointLight(0xffffff, 0.4);
-      rimLight.position.set(0, 0, 5);
-      scene.add(rimLight);
-
-      // ── BACKGROUND PARTICLES (subtle star field) ──
-      const bgGeo = new THREE.BufferGeometry();
-      const bgCount = 500;
-      const bgPos = new Float32Array(bgCount * 3);
-      for (let i = 0; i < bgCount * 3; i++) bgPos[i] = (Math.random() - 0.5) * 40;
-      bgGeo.setAttribute('position', new THREE.BufferAttribute(bgPos, 3));
-      const bgMat = new THREE.PointsMaterial({ color: 0xc2a4ff, size: 0.03, transparent: true, opacity: 0.15 });
-      scene.add(new THREE.Points(bgGeo, bgMat));
-
-      // ── GLASS MATERIAL ──
-      let glassMat;
+      // ── POST-PROCESSING (bloom) ──
+      let composer;
       try {
-        glassMat = new THREE.MeshPhysicalMaterial({
-          color: 0x1a1a2e,
-          transmission: 0.92,
-          roughness: 0.08,
-          thickness: 0.5,
-          ior: 1.5,
-          envMapIntensity: 1.0,
-          transparent: true,
-          side: THREE.DoubleSide,
-        });
-        // Force a test compile to catch GPU issues early
-        renderer.compile(scene, camera);
-      } catch(matErr) {
-        glassMat = new THREE.MeshStandardMaterial({
-          color: 0x1a1a2e,
-          transparent: true,
-          opacity: 0.15,
-          roughness: 0.2,
-          metalness: 0.8,
-          side: THREE.DoubleSide,
-        });
+        composer = new THREE.EffectComposer(renderer);
+        composer.addPass(new THREE.RenderPass(scene, camera));
+        const bloom = new THREE.UnrealBloomPass(
+          new THREE.Vector2(window.innerWidth, window.innerHeight),
+          0.8, 0.4, 0.85
+        );
+        composer.addPass(bloom);
+      } catch(e) {
+        composer = null; // Fallback to regular render
       }
 
-      // ── WIREFRAME MATERIAL ──
-      const wireMat = new THREE.LineBasicMaterial({
-        color: 0xc2a4ff,
+      // ── STAR FIELD (3 layers, 5000 stars each) ──
+      const starLayers = [];
+      for (let layer = 0; layer < 3; layer++) {
+        const count = 5000;
+        const geo = new THREE.BufferGeometry();
+        const pos = new Float32Array(count * 3);
+        const col = new Float32Array(count * 3);
+        const sizes = new Float32Array(count);
+
+        for (let j = 0; j < count; j++) {
+          const r = 200 + Math.random() * 800;
+          const theta = Math.random() * Math.PI * 2;
+          const phi = Math.acos(Math.random() * 2 - 1);
+          pos[j*3]   = r * Math.sin(phi) * Math.cos(theta);
+          pos[j*3+1] = r * Math.sin(phi) * Math.sin(theta);
+          pos[j*3+2] = r * Math.cos(phi);
+
+          const c = new THREE.Color();
+          const pick = Math.random();
+          if (pick < 0.7) c.setHSL(0, 0, 0.8 + Math.random() * 0.2);
+          else if (pick < 0.9) c.setHSL(0.08, 0.5, 0.8);
+          else c.setHSL(0.6, 0.5, 0.8);
+          col[j*3] = c.r; col[j*3+1] = c.g; col[j*3+2] = c.b;
+          sizes[j] = Math.random() * 2 + 0.5;
+        }
+
+        geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+        geo.setAttribute('color', new THREE.BufferAttribute(col, 3));
+        geo.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
+
+        const mat = new THREE.ShaderMaterial({
+          uniforms: { time: { value: 0 }, depth: { value: layer } },
+          vertexShader: `
+            attribute float size;
+            attribute vec3 color;
+            varying vec3 vColor;
+            uniform float time;
+            uniform float depth;
+            void main() {
+              vColor = color;
+              vec3 p = position;
+              float angle = time * 0.05 * (1.0 - depth * 0.3);
+              mat2 rot = mat2(cos(angle), -sin(angle), sin(angle), cos(angle));
+              p.xy = rot * p.xy;
+              vec4 mv = modelViewMatrix * vec4(p, 1.0);
+              gl_PointSize = size * (300.0 / -mv.z);
+              gl_Position = projectionMatrix * mv;
+            }
+          `,
+          fragmentShader: `
+            varying vec3 vColor;
+            void main() {
+              float d = length(gl_PointCoord - vec2(0.5));
+              if (d > 0.5) discard;
+              float a = 1.0 - smoothstep(0.0, 0.5, d);
+              gl_FragColor = vec4(vColor, a);
+            }
+          `,
+          transparent: true,
+          blending: THREE.AdditiveBlending,
+          depthWrite: false
+        });
+
+        const stars = new THREE.Points(geo, mat);
+        scene.add(stars);
+        starLayers.push(stars);
+      }
+
+      // ── NEBULA ──
+      const nebulaGeo = new THREE.PlaneGeometry(8000, 4000, 100, 100);
+      const nebulaMat = new THREE.ShaderMaterial({
+        uniforms: {
+          time: { value: 0 },
+          color1: { value: new THREE.Color(0x3311bb) },
+          color2: { value: new THREE.Color(0xcc0066) },
+          opacity: { value: 0.3 }
+        },
+        vertexShader: `
+          varying vec2 vUv;
+          varying float vElev;
+          uniform float time;
+          void main() {
+            vUv = uv;
+            vec3 p = position;
+            float elev = sin(p.x * 0.01 + time) * cos(p.y * 0.01 + time) * 20.0;
+            p.z += elev;
+            vElev = elev;
+            gl_Position = projectionMatrix * modelViewMatrix * vec4(p, 1.0);
+          }
+        `,
+        fragmentShader: `
+          uniform vec3 color1;
+          uniform vec3 color2;
+          uniform float opacity;
+          uniform float time;
+          varying vec2 vUv;
+          varying float vElev;
+          void main() {
+            float mix_ = sin(vUv.x * 10.0 + time) * cos(vUv.y * 10.0 + time);
+            vec3 col = mix(color1, color2, mix_ * 0.5 + 0.5);
+            float a = opacity * (1.0 - length(vUv - 0.5) * 2.0);
+            a *= 1.0 + vElev * 0.01;
+            gl_FragColor = vec4(col, a);
+          }
+        `,
         transparent: true,
-        opacity: 0.35,
+        blending: THREE.AdditiveBlending,
+        side: THREE.DoubleSide,
+        depthWrite: false
+      });
+      const nebula = new THREE.Mesh(nebulaGeo, nebulaMat);
+      nebula.position.z = -1050;
+      scene.add(nebula);
+
+      // ── MOUNTAIN SILHOUETTES (4 parallax layers) ──
+      const mountainLayers = [
+        { dist: -50,  h: 60,  color: 0x1a1a2e, opacity: 1 },
+        { dist: -100, h: 80,  color: 0x16213e, opacity: 0.8 },
+        { dist: -150, h: 100, color: 0x0f3460, opacity: 0.6 },
+        { dist: -200, h: 120, color: 0x0a4668, opacity: 0.4 }
+      ];
+      const mountains = [];
+      const mountainBaseZ = [];
+      mountainLayers.forEach((layer, idx) => {
+        const pts = [];
+        const segs = 50;
+        for (let i = 0; i <= segs; i++) {
+          const x = (i / segs - 0.5) * 1000;
+          const y = Math.sin(i * 0.1) * layer.h + Math.sin(i * 0.05) * layer.h * 0.5 + Math.random() * layer.h * 0.2 - 100;
+          pts.push(new THREE.Vector2(x, y));
+        }
+        pts.push(new THREE.Vector2(5000, -300));
+        pts.push(new THREE.Vector2(-5000, -300));
+        const shape = new THREE.Shape(pts);
+        const geo = new THREE.ShapeGeometry(shape);
+        const mat = new THREE.MeshBasicMaterial({ color: layer.color, transparent: true, opacity: layer.opacity, side: THREE.DoubleSide });
+        const mesh = new THREE.Mesh(geo, mat);
+        mesh.position.z = layer.dist;
+        mesh.position.y = layer.dist;
+        scene.add(mesh);
+        mountains.push(mesh);
+        mountainBaseZ.push(layer.dist);
       });
 
-      // ── HELPER: create glass object with wireframe overlay ──
-      function createGlassObject(geometry) {
-        const group = new THREE.Group();
-        group.add(new THREE.Mesh(geometry, glassMat));
-        group.add(new THREE.LineSegments(new THREE.WireframeGeometry(geometry), wireMat));
-        return group;
-      }
+      // ── ATMOSPHERE SPHERE ──
+      const atmosGeo = new THREE.SphereGeometry(600, 32, 32);
+      const atmosMat = new THREE.ShaderMaterial({
+        uniforms: { time: { value: 0 } },
+        vertexShader: `
+          varying vec3 vNormal;
+          void main() {
+            vNormal = normalize(normalMatrix * normal);
+            gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+          }
+        `,
+        fragmentShader: `
+          varying vec3 vNormal;
+          uniform float time;
+          void main() {
+            float intensity = pow(0.7 - dot(vNormal, vec3(0.0, 0.0, 1.0)), 2.0);
+            vec3 atmos = vec3(0.3, 0.6, 1.0) * intensity;
+            float pulse = sin(time * 2.0) * 0.1 + 0.9;
+            atmos *= pulse;
+            gl_FragColor = vec4(atmos, intensity * 0.25);
+          }
+        `,
+        side: THREE.BackSide,
+        blending: THREE.AdditiveBlending,
+        transparent: true
+      });
+      scene.add(new THREE.Mesh(atmosGeo, atmosMat));
 
-      // ── OBJECTS ──
-      const torus = createGlassObject(new THREE.TorusGeometry(1.2, 0.35, 32, 64));
-      const ico   = createGlassObject(new THREE.IcosahedronGeometry(0.6, 0));
-      const octa  = createGlassObject(new THREE.OctahedronGeometry(0.4, 0));
+      // ── SMOOTH CAMERA STATE ──
+      const smoothCam = { x: 0, y: 30, z: 100 };
+      let targetCam = { x: 0, y: 30, z: 100 };
+      let mouseX = 0, mouseY = 0;
 
-      // ── MAIN GROUP ──
-      const glassGroup = new THREE.Group();
-      glassGroup.add(torus);
-      glassGroup.add(ico);
-      glassGroup.add(octa);
-      glassGroup.position.set(2.0, 0.2, 0);
-      scene.add(glassGroup);
-
-      // ── MOUSE TRACKING ──
-      let mouseX = 0, mouseY = 0, targetX = 0, targetY = 0;
       document.addEventListener('mousemove', e => {
         mouseX = (e.clientX / window.innerWidth - 0.5) * 2;
         mouseY = -(e.clientY / window.innerHeight - 0.5) * 2;
       });
+
+      // ── SCROLL-DRIVEN CAMERA ──
+      window.addEventListener('scroll', () => {
+        const scrollY = window.scrollY;
+        const maxScroll = document.body.scrollHeight - window.innerHeight;
+        const progress = Math.min(scrollY / maxScroll, 1);
+
+        // Camera moves deeper into scene as user scrolls
+        targetCam.x = 0;
+        targetCam.y = 30 + progress * 20;
+        targetCam.z = 100 - progress * 800;
+
+        // Mountain parallax — fade out mountains as camera passes them
+        mountains.forEach((m, i) => {
+          const speed = 1 + i * 0.9;
+          if (progress > 0.7) {
+            m.visible = false;
+          } else {
+            m.visible = true;
+            m.position.z = mountainBaseZ[i] + scrollY * speed * 0.5;
+          }
+        });
+
+        // Nebula follows furthest mountain
+        nebula.position.z = mountains[3].position.z;
+      }, { passive: true });
 
       // ── RESIZE ──
       window.addEventListener('resize', () => {
         camera.aspect = window.innerWidth / window.innerHeight;
         camera.updateProjectionMatrix();
         renderer.setSize(window.innerWidth, window.innerHeight);
+        if (composer) composer.setSize(window.innerWidth, window.innerHeight);
       });
 
       // ── ANIMATE ──
       const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      let frame = 0;
       (function animate() {
         requestAnimationFrame(animate);
-        frame++;
+        const time = Date.now() * 0.001;
+
+        // Update star shaders
+        starLayers.forEach(s => { if (s.material.uniforms) s.material.uniforms.time.value = time; });
+
+        // Update nebula
+        if (nebulaMat.uniforms) nebulaMat.uniforms.time.value = time * 0.5;
+
+        // Update atmosphere
+        atmosMat.uniforms.time.value = time;
 
         if (!reducedMotion) {
-          torus.rotation.y = frame * 0.003;
+          // Smooth camera interpolation
+          const ease = 0.05;
+          smoothCam.x += (targetCam.x - smoothCam.x) * ease;
+          smoothCam.y += (targetCam.y - smoothCam.y) * ease;
+          smoothCam.z += (targetCam.z - smoothCam.z) * ease;
 
-          const icoAngle = frame * 0.008;
-          ico.position.x = Math.cos(icoAngle) * 2.0;
-          ico.position.z = Math.sin(icoAngle) * 2.0;
-          ico.position.y = Math.sin(icoAngle * 0.5) * 0.3;
-          ico.rotation.x = frame * 0.005;
-          ico.rotation.y = frame * 0.005;
+          // Subtle floating motion + mouse parallax
+          const floatX = Math.sin(time * 0.1) * 2 + mouseX * 8;
+          const floatY = Math.cos(time * 0.15) * 1 + mouseY * 4;
 
-          const octaAngle = -frame * 0.006;
-          octa.position.x = Math.cos(octaAngle) * 1.5;
-          octa.position.z = Math.sin(octaAngle) * 1.5;
-          octa.position.y = Math.cos(octaAngle * 0.7) * 0.2;
-          octa.rotation.z = frame * 0.004;
+          camera.position.x = smoothCam.x + floatX;
+          camera.position.y = smoothCam.y + floatY;
+          camera.position.z = smoothCam.z;
+          camera.lookAt(0, 10, -600);
 
-          targetX += (mouseX - targetX) * 0.035;
-          targetY += (mouseY - targetY) * 0.035;
-          glassGroup.rotation.y = frame * 0.001 + targetX * 0.35;
-          glassGroup.rotation.x = targetY * 0.2;
+          // Mountain subtle sway
+          mountains.forEach((m, i) => {
+            const pf = 1 + i * 0.5;
+            m.position.x = Math.sin(time * 0.1) * 2 * pf;
+          });
         }
 
-        renderer.render(scene, camera);
+        if (composer) {
+          composer.render();
+        } else {
+          renderer.render(scene, camera);
+        }
       })();
-    })(); } catch(e) { /* WebGL unavailable — glass objects skipped, rest of page continues */ }
+    })(); } catch(e) { /* WebGL unavailable — space scene skipped */ }
 
     // ── NAV ──
     const nav = document.getElementById('nav');
