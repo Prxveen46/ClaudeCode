@@ -1,0 +1,4 @@
+[     641ms] [ERROR] Failed to load resource: the server responded with a status of 404 (File not found) @ http://localhost:3000/favicon.ico:0
+[   15755ms] [WARNING] [.WebGL-0x13400436600] GL_INVALID_OPERATION: invalid mailbox name. @ http://localhost:3000/:0
+[   15755ms] [WARNING] [.WebGL-0x13400436600] GL_INVALID_OPERATION: texture is not a shared image @ http://localhost:3000/:0
+[   15755ms] [WARNING] [.WebGL-0x13400436600] GL_INVALID_OPERATION: texture is not a shared image @ http://localhost:3000/:0

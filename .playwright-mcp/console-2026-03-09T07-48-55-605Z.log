@@ -1,0 +1,6 @@
+[      25ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:9222/favicon.ico:0
+[    5802ms] [ERROR] ErrorUtils caught an error:
+
+Unable to resolve resource h37hhkE.
+
+Subsequent non-fatal errors won't be logged; see https://fburl.com/debugjs. {column: 17870, clientTime: 1773042541, extra: Object, guardList: Array(1), hash: c5vjdq} @ https://static.cdninstagram.com/rsrc.php/v4/ya/r/Hf54VCqkkAe.js:76

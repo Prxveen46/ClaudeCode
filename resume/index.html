@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Praveen Kumar — Resume</title>
+<style>
+  @page {
+    size: A4;
+    margin: 12mm 16mm 10mm 16mm;
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+    font-size: 9pt;
+    line-height: 1.38;
+    color: #2d2d2d;
+    background: #fff;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* ── Header ── */
+  .header {
+    text-align: center;
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+    border-bottom: 2.5px solid #1a3a5c;
+  }
+
+  .header h1 {
+    font-size: 24pt;
+    font-weight: 700;
+    color: #1a3a5c;
+    letter-spacing: 2.5px;
+    margin-bottom: 3px;
+  }
+
+  .header .subtitle {
+    font-size: 10pt;
+    color: #3a7ca5;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+  }
+
+  .contact-row {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    font-size: 8.3pt;
+    color: #444;
+  }
+
+  .contact-row a {
+    color: #3a7ca5;
+    text-decoration: none;
+  }
+
+  .contact-item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .contact-icon {
+    font-size: 9pt;
+  }
+
+  /* ── Section Titles ── */
+  .section-title {
+    font-size: 10pt;
+    font-weight: 700;
+    color: #1a3a5c;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    border-bottom: 2px solid #3a7ca5;
+    padding-bottom: 3px;
+    margin-bottom: 6px;
+    margin-top: 11px;
+    page-break-after: avoid;
+  }
+
+  .section-title.first {
+    margin-top: 8px;
+  }
+
+  /* ── Professional Summary ── */
+  .summary {
+    text-align: justify;
+    color: #333;
+    line-height: 1.45;
+    font-size: 8.8pt;
+  }
+
+  /* ── Core Competencies ── */
+  .competencies-grid {
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    gap: 2px 10px;
+    font-size: 8.8pt;
+  }
+
+  .comp-label {
+    font-weight: 700;
+    color: #1a3a5c;
+    padding: 2px 0;
+  }
+
+  .comp-value {
+    color: #444;
+    padding: 2px 0;
+    line-height: 1.38;
+  }
+
+  /* ── Experience ── */
+  .job {
+    margin-bottom: 7px;
+  }
+
+  .job-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 1px;
+    page-break-after: avoid;
+  }
+
+  .job-company {
+    font-size: 10pt;
+    font-weight: 700;
+    color: #1a3a5c;
+  }
+
+  .job-date {
+    font-size: 8.5pt;
+    color: #555;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .job-title {
+    font-size: 9pt;
+    font-weight: 600;
+    color: #3a7ca5;
+    margin-bottom: 2px;
+    page-break-after: avoid;
+  }
+
+  .job-desc {
+    font-size: 8.5pt;
+    color: #555;
+    font-style: italic;
+    margin-bottom: 4px;
+    line-height: 1.38;
+  }
+
+  .bullets {
+    list-style: none;
+    padding-left: 0;
+  }
+
+  .bullets li {
+    position: relative;
+    padding-left: 12px;
+    margin-bottom: 2.5px;
+    font-size: 8.8pt;
+    line-height: 1.38;
+    color: #333;
+    page-break-inside: avoid;
+  }
+
+  .bullets li::before {
+    content: '\25B8';
+    position: absolute;
+    left: 0;
+    color: #3a7ca5;
+    font-size: 8pt;
+    font-weight: 700;
+  }
+
+  .bullets li strong {
+    color: #1a3a5c;
+  }
+
+  /* ── Projects Table ── */
+  .projects-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 8.5pt;
+    margin-top: 4px;
+  }
+
+  .projects-table tr {
+    border-bottom: 1px solid #e8e8e8;
+    page-break-inside: avoid;
+  }
+
+  .projects-table tr:last-child {
+    border-bottom: none;
+  }
+
+  .projects-table td {
+    padding: 4px 8px;
+    vertical-align: top;
+    line-height: 1.38;
+  }
+
+  .projects-table td:first-child {
+    font-weight: 700;
+    color: #1a3a5c;
+    white-space: nowrap;
+    width: 165px;
+    font-size: 8.3pt;
+  }
+
+  .projects-table td:last-child {
+    color: #444;
+  }
+
+  /* ── Education ── */
+  .edu-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5px 30px;
+    margin-top: 5px;
+  }
+
+  .edu-item h4 {
+    font-size: 9pt;
+    font-weight: 700;
+    color: #1a3a5c;
+    margin-bottom: 1px;
+  }
+
+  .edu-item p {
+    font-size: 8.5pt;
+    color: #555;
+  }
+
+  .certs-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px 30px;
+    font-size: 8.5pt;
+    color: #444;
+    margin-top: 5px;
+  }
+
+  .cert-item {
+    padding-left: 12px;
+    position: relative;
+  }
+
+  .cert-item::before {
+    content: '\25B8';
+    position: absolute;
+    left: 0;
+    color: #3a7ca5;
+    font-weight: 700;
+  }
+
+  /* ── Screen Preview ── */
+  @media screen {
+    body { background: #e8e8e8; padding: 20px 0; }
+    .resume-content {
+      width: 210mm;
+      background: #fff;
+      margin: 0 auto;
+      padding: 12mm 16mm;
+      box-shadow: 0 2px 20px rgba(0,0,0,0.12);
+    }
+  }
+
+  @media print {
+    .resume-content {
+      padding: 0;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="resume-content">
+
+  <!-- Header -->
+  <div class="header">
+    <h1>PRAVEEN KUMAR</h1>
+    <div class="subtitle">AI-Augmented Senior Data Analyst &nbsp;|&nbsp; Data Strategy &amp; Analytics Engineering</div>
+    <div class="contact-row">
+      <span class="contact-item"><span class="contact-icon">&#x1F4CD;</span> Bengaluru, KA 560076</span>
+      <span class="contact-item"><span class="contact-icon">&#x2709;</span> <a href="mailto:prxveen46@gmail.com">prxveen46@gmail.com</a></span>
+      <span class="contact-item"><span class="contact-icon">&#x1F4DE;</span> +91-8883886881</span>
+      <span class="contact-item"><span class="contact-icon">&#x1F517;</span> <a href="https://linkedin.com/in/praveenvr46">linkedin.com/in/praveenvr46</a></span>
+    </div>
+  </div>
+
+  <!-- Professional Summary -->
+  <div class="section-title first">Professional Summary</div>
+  <p class="summary">
+    Results-driven <strong>Senior Data Analyst with 9+ years of experience</strong> spanning Business Intelligence, Marketing Analytics, and AI-Augmented Data Engineering — building systems that generate revenue, cut costs, and drive decisions. I am an <strong>AI-native practitioner who vibe codes daily</strong> — translating analytical intent into working SQL pipelines, Python scripts, and data tools using <strong>Claude Code</strong> (terminal CLI &amp; web UI), ChatGPT, and Gemini, without traditional development bottlenecks. Outside work, I build hobby projects with <strong>OpenAI APIs</strong> (GPT-4o, Assistants API, Embeddings) and stay current with the AI space every day — model releases, applied ML papers, new tooling — as a continuous learning discipline. Proven track record with <strong>Microsoft, Amazon, Nike, Audi</strong> — 90% pipeline latency reduction, 25+ production dashboards, and 80% CSAT improvement.
+  </p>
+
+  <!-- Core Competencies -->
+  <div class="section-title">Core Competencies</div>
+  <div class="competencies-grid">
+    <div class="comp-label">AI &amp; LLM</div>
+    <div class="comp-value">Claude Code (Terminal + Web, Vibe Coding) · OpenAI API (GPT-4o / Assistants / Embeddings) · Anthropic API · Gemini · Prompt Engineering · LLM-Driven Data Pipelines · Automated Insight Generation</div>
+    <div class="comp-label">Data Engineering</div>
+    <div class="comp-value">SQL (Advanced) · Snowflake · Azure Cosmos DB · GCP · ETL/ELT · Data Modeling · Automated Pipelines</div>
+    <div class="comp-label">BI &amp; Visualization</div>
+    <div class="comp-value">Tableau · Power BI · DAX · Real-Time KPI Dashboarding · Data Storytelling</div>
+    <div class="comp-label">Analytics &amp; ML</div>
+    <div class="comp-value">Predictive Modeling · Customer Segmentation · Behavioral Modeling · A/B Testing · Statistical Analysis</div>
+    <div class="comp-label">Programming</div>
+    <div class="comp-value">Python · R · Scope Application Language (.NET/C#)</div>
+    <div class="comp-label">Marketing</div>
+    <div class="comp-value">Campaign Optimization · ROAS/ROI Analysis · Keyword Performance · YoY/WoW Trend Analysis</div>
+    <div class="comp-label">Tools &amp; Leadership</div>
+    <div class="comp-value">Jira · Azure DevOps · GitHub · Cross-Functional Leadership · Agile/Scrum · Requirements Engineering</div>
+  </div>
+
+  <!-- Professional Experience -->
+  <div class="section-title">Professional Experience</div>
+
+  <!-- Vimeo -->
+  <div class="job">
+    <div class="job-header">
+      <span class="job-company">Vimeo.com — Bengaluru</span>
+      <span class="job-date">Jan 2022 – Present</span>
+    </div>
+    <div class="job-title">Senior Data Analyst</div>
+    <div class="job-desc">Product &amp; Marketing analytics for a global video SaaS platform — full ownership of pipeline engineering, dashboarding, stakeholder reporting, and AI-assisted insight generation.</div>
+    <ul class="bullets">
+      <li>Eliminated <strong>90% of data processing latency</strong> by re-engineering legacy ETL into fully automated Snowflake pipelines; accelerated time-to-insight from days to hours for product and marketing leadership.</li>
+      <li>Boosted <strong>CSAT by 80%</strong> via deep-dive SQL + Tableau customer journey analysis; identified 3 critical friction points and shipped targeted UX fixes with Product.</li>
+      <li>Deployed <strong>10+ real-time Tableau dashboards</strong> with integrated feedback loops — cutting reporting cycles by 25% and eliminating manual overhead across 4 teams.</li>
+      <li>Improved <strong>agent efficiency 15%</strong> and cut <strong>operational costs 15%</strong> via analytical tooling tracking interaction quality, skill gaps, and workforce allocation.</li>
+      <li>Reduced <strong>average response time 10%</strong> through support strategy models identifying resolution patterns and recommending staffing optimizations.</li>
+      <li><strong>AI-Native Workflow (Daily):</strong> Vibe code SQL pipelines and Python scripts using <strong>Claude Code</strong> (terminal CLI + web UI); use ChatGPT &amp; Gemini for automated EDA and LLM sentiment tagging across thousands of customer feedback entries — compressing multi-day tasks into hours.</li>
+    </ul>
+  </div>
+
+  <!-- Mindtree -->
+  <div class="job">
+    <div class="job-header">
+      <span class="job-company">Mindtree Limited — Bengaluru</span>
+      <span class="job-date">Aug 2019 – Jan 2022</span>
+    </div>
+    <div class="job-title">Senior Analyst — Digital Marketing Analytics (Microsoft Account)</div>
+    <div class="job-desc">Embedded analytics partner on Microsoft's Digital Marketing Analytics program — market intelligence and campaign analytics for Amazon, Nike, and Audi across global markets.</div>
+    <ul class="bullets">
+      <li>Drove <strong>20% faster decision-making</strong> by architecting 15+ Power BI dashboards transforming Azure Cosmos DB datasets into executive-ready narratives, replacing ad hoc data pulls with self-serve intelligence.</li>
+      <li><strong>Trending Travel Dashboard (TTD):</strong> Weekly-refresh Power BI platform tracking destination trends, keyword performance (YoY/WoW), search volume, and click index with sensitivity-compliant data masking — used directly by Microsoft advertising strategists.</li>
+      <li><strong>Consumer Decision Journey Tool:</strong> Mapped user intent signals across the full consumer funnel; refined ad strategies and optimized ROAS for Amazon, Nike, and Audi.</li>
+      <li><strong>Query Pathing Tool:</strong> Search behavior tracker with location/POI/destination classification logic — targeting insights improved campaign <strong>ROI by 10%</strong>.</li>
+      <li>Enhanced <strong>DB performance 30%</strong> by refactoring high-volume SQL queries and stored procedures; cut development rework 15% via structured requirements-gathering sessions with Microsoft stakeholders.</li>
+    </ul>
+  </div>
+
+  <!-- Earlier Experience -->
+  <div class="section-title">Earlier Experience</div>
+
+  <!-- TransCentra -->
+  <div class="job">
+    <div class="job-header">
+      <span class="job-company">TransCentra — Chennai</span>
+      <span class="job-date">Mar 2018 – Aug 2019</span>
+    </div>
+    <div class="job-title">Data Analyst</div>
+    <ul class="bullets">
+      <li>Maintained <strong>99%+ SLA resolution rate</strong> on critical SQL and server-based incidents; executed complex SQL root cause analysis (RCA) reducing recurring defects and system downtime.</li>
+      <li>Administered server and network infrastructure, proactively monitoring for failures and maintaining high availability across production systems.</li>
+    </ul>
+  </div>
+
+  <!-- Groupon -->
+  <div class="job">
+    <div class="job-header">
+      <span class="job-company">Groupon.com — Chennai</span>
+      <span class="job-date">Nov 2016 – Dec 2017</span>
+    </div>
+    <div class="job-title">Consultant — Data &amp; Business Analytics</div>
+    <ul class="bullets">
+      <li>Generated BI reports translating e-commerce campaign performance into strategic recommendations for regional market leads; managed customer support analytics pipelines with high satisfaction metrics.</li>
+    </ul>
+  </div>
+
+  <!-- Key Projects -->
+  <div class="section-title">Key Projects &amp; AI-Augmented Tools</div>
+  <table class="projects-table">
+    <tr>
+      <td>Trending Travel Dashboard</td>
+      <td>Weekly-refresh Power BI for Microsoft — destination trends, keyword performance (YoY/WoW), search volume, click index with sensitivity-compliant data masking. Used by Microsoft advertising strategists for campaign planning.</td>
+    </tr>
+    <tr>
+      <td>Consumer Decision Journey Tool</td>
+      <td>Mapped user intent + purchase factors across the consumer funnel; optimized ROAS for Amazon, Nike, and Audi on Microsoft's advertising platform. Enabled data-driven ad spend allocation across global markets.</td>
+    </tr>
+    <tr>
+      <td>Query Pathing Tool</td>
+      <td>Search behavior tracker with location/POI/destination classification logic — insights improved campaign ROI by 10%. Provided granular targeting capabilities for Microsoft advertising teams.</td>
+    </tr>
+    <tr>
+      <td>OpenAI API Hobby Projects</td>
+      <td>Personal projects with GPT-4o, Assistants API, and Embeddings — built semantic document search, automated Q&amp;A over datasets, and AI-generated data narrative reports in Python.</td>
+    </tr>
+    <tr>
+      <td>AI-Assisted Analytics Pipeline</td>
+      <td>Claude Code + ChatGPT integrated into daily analytics workflow — automated EDA, plain-English SQL generation, LLM sentiment analysis — reducing EDA cycle time by ~70%.</td>
+    </tr>
+    <tr>
+      <td>Daily AI Research Practice</td>
+      <td>Daily learning discipline covering model releases (Claude, GPT, Gemini, OSS LLMs), applied ML papers, and new tooling (LangChain, Ollama, fine-tuning) — directly informs production decisions.</td>
+    </tr>
+  </table>
+
+  <!-- Education -->
+  <div class="section-title">Education</div>
+  <div class="edu-grid">
+    <div class="edu-item">
+      <h4>Master of Business Administration (MBA)</h4>
+      <p>Madras University, Chennai · Dec 2020</p>
+    </div>
+    <div class="edu-item">
+      <h4>Bachelor of Engineering (B.E.)</h4>
+      <p>Sathyabama University, Chennai · Apr 2016</p>
+    </div>
+  </div>
+
+  <!-- Certifications -->
+  <div class="section-title">Certifications</div>
+  <div class="certs-grid">
+    <div class="cert-item">Advanced Data Science Certification — upGrad (2024)</div>
+    <div class="cert-item">Data Science Programming Bootcamp — upGrad (2023)</div>
+    <div class="cert-item">Power BI for Data Analytics — Pluralsight (2019)</div>
+    <div class="cert-item">SQL for Data Science — Coursera (2019)</div>
+  </div>
+
+</div>
+
+</body>
+</html>
