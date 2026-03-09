@@ -287,8 +287,8 @@
       gap: 5rem;
       align-items: start;
     }
-    .about-text p { color: var(--text-secondary); font-size: 1rem; line-height: 1.9; margin-bottom: 1.25rem; }
-    .about-text strong { color: var(--text-primary); }
+    .about-text p { color: var(--text-secondary); font-size: 1.1rem; line-height: 1.8; margin-bottom: 1.5rem; }
+    .about-text strong { color: var(--accent); font-weight: 600; }
     .about-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; border: 1px solid var(--border); }
     .stat-box { padding: 1.75rem 1.5rem; border: 1px solid var(--border); background: var(--bg-card); }
     .stat-num {
@@ -876,9 +876,26 @@
       background: rgba(194, 164, 255, 0.08);
     }
 
+    /* ── LARGE SECTION HEADINGS ── */
+    .section-heading-large {
+      font-family: var(--font-heading);
+      font-size: clamp(2.5rem, 6vw, 5rem);
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--text-primary);
+      line-height: 1;
+      margin-bottom: 3rem;
+      opacity: 0.9;
+    }
+    .section-heading-large .accent-word {
+      color: var(--accent);
+    }
+
     /* ── RESPONSIVE ── */
     @media (max-width: 900px) {
       h1 { font-size: 3rem; }
+      .section-heading-large { font-size: clamp(2rem, 5vw, 3rem); letter-spacing: 0.1em; }
       .hero-inner { grid-template-columns: 1fr; }
       .hero-sphere-hint { height: 200px; }
       .about-layout { grid-template-columns: 1fr; gap: 3rem; }
@@ -1140,9 +1157,7 @@
   <section id="about">
     <div class="container">
       <div>
-        <div class="section-line" data-reveal="left"></div>
-        <div class="eyebrow" data-reveal="up" data-stagger="1">About</div>
-        <h2 class="section-title" data-reveal="up" data-stagger="2">Turning Data<br>Into Decisions</h2>
+        <h2 class="section-heading-large" data-reveal="up" data-stagger="2">ABOUT <span class="accent-word">ME</span></h2>
       </div>
       <div class="about-layout">
         <div class="about-text">
@@ -1176,9 +1191,7 @@
   <section id="skills">
     <div class="container">
       <div>
-        <div class="section-line" data-reveal="left"></div>
-        <div class="eyebrow" data-reveal="up" data-stagger="1">Skills &amp; Tools</div>
-        <h2 class="section-title" data-reveal="up" data-stagger="2">Technical Arsenal</h2>
+        <h2 class="section-heading-large" data-reveal="up" data-stagger="2">WHAT I <span class="accent-word">DO</span></h2>
       </div>
       <div class="skills-container">
         <div class="skill-card" data-reveal="left" data-stagger="3">
@@ -1248,9 +1261,7 @@
   <section id="experience">
     <div class="container">
       <div>
-        <div class="section-line" data-reveal="left"></div>
-        <div class="eyebrow" data-reveal="up" data-stagger="1">Experience</div>
-        <h2 class="section-title" data-reveal="up" data-stagger="2">Career Journey</h2>
+        <h2 class="section-heading-large" data-reveal="up" data-stagger="2">MY <span class="accent-word">CAREER</span></h2>
       </div>
       <div class="timeline-centered">
         <div class="tl-center-line"></div>
@@ -1339,9 +1350,7 @@
   <section id="projects">
     <div class="projects-sticky">
       <div class="projects-header">
-        <div class="section-line" data-reveal="left"></div>
-        <div class="eyebrow" data-reveal="up" data-stagger="1">Featured Projects</div>
-        <h2 data-reveal="up" data-stagger="2">Tools &amp; Dashboards Built</h2>
+        <h2 class="section-heading-large" data-reveal="up" data-stagger="2">MY <span class="accent-word">WORK</span></h2>
       </div>
       <div class="projects-track">
         <div class="project-card glass-card">
@@ -1535,9 +1544,7 @@
   <section id="education">
     <div class="container">
       <div>
-        <div class="section-line" data-reveal="left"></div>
-        <div class="eyebrow" data-reveal="up" data-stagger="1">Education &amp; Certifications</div>
-        <h2 class="section-title" data-reveal="up" data-stagger="2">Academic Background</h2>
+        <h2 class="section-heading-large" data-reveal="up" data-stagger="2">EDU<span class="accent-word">CATION</span></h2>
       </div>
       <div class="edu-grid" data-reveal="scale" data-stagger="3">
         <div class="glass-card edu-card">
@@ -1593,9 +1600,7 @@
   <section id="contact">
     <div class="container">
       <div>
-        <div class="section-line" data-reveal="left"></div>
-        <div class="eyebrow" data-reveal="up" data-stagger="1">Let's Connect</div>
-        <h2 class="section-title" data-reveal="up" data-stagger="2">Get In Touch</h2>
+        <h2 class="section-heading-large" data-reveal="up" data-stagger="2">GET IN <span class="accent-word">TOUCH</span></h2>
       </div>
       <div class="contact-layout" data-reveal="up" data-stagger="3">
         <div class="contact-info">
