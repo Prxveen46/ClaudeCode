@@ -5,18 +5,52 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Praveen Kumar | Senior Data Analyst</title>
   <meta name="description" content="Senior Data Analyst with 9+ years — Marketing Analytics, BI, SQL, Snowflake, Tableau, Power BI, Python.">
+
+  <!-- Canonical -->
+  <link rel="canonical" href="https://portfolio-two-lovat-85.vercel.app/">
+
+  <!-- Favicon -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='16' fill='%230b080c'/><text y='.9em' font-size='72' font-family='monospace' font-weight='bold' fill='%23c2a4ff'>PK</text></svg>">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://portfolio-two-lovat-85.vercel.app/">
+  <meta property="og:title" content="Praveen Kumar | Senior Data Analyst">
+  <meta property="og:description" content="Senior Data Analyst with 9+ years transforming complex datasets into business strategy — Marketing Analytics, BI, and enterprise insights for Microsoft, Amazon, Nike & Audi.">
+  <meta property="og:image" content="https://portfolio-two-lovat-85.vercel.app/og-image.png">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Praveen Kumar | Senior Data Analyst">
+  <meta name="twitter:description" content="9+ years transforming complex datasets into business strategy — Marketing Analytics, BI, SQL, Snowflake, Tableau.">
+  <meta name="twitter:image" content="https://portfolio-two-lovat-85.vercel.app/og-image.png">
+
+  <!-- Preconnect to CDN hosts for faster script loading -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+
   <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800&family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.134.0/examples/js/postprocessing/EffectComposer.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.134.0/examples/js/postprocessing/RenderPass.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.134.0/examples/js/shaders/CopyShader.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.134.0/examples/js/postprocessing/ShaderPass.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.134.0/examples/js/shaders/LuminosityHighPassShader.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.134.0/examples/js/postprocessing/UnrealBloomPass.js"></script>
   <style>
     /* ── RESET ── */
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    /* ── SKIP LINK ── */
+    .skip-link {
+      position: absolute;
+      top: -100%;
+      left: 1rem;
+      z-index: 9999;
+      padding: 0.5rem 1rem;
+      background: #c2a4ff;
+      color: #0b080c;
+      font-weight: 700;
+      border-radius: 0 0 4px 4px;
+      font-size: 0.85rem;
+      transition: top 0.2s;
+    }
+    .skip-link:focus { top: 0; }
 
     /* ── VARIABLES ── */
     :root {
@@ -1108,7 +1142,7 @@
       to   { opacity: 1; transform: translateY(0); }
     }
 
-    /* prefers-reduced-motion: show everything immediately */
+    /* prefers-reduced-motion: show everything immediately, hide animated canvas */
     @media (prefers-reduced-motion: reduce) {
       .hero-text .eyebrow,
       .hero-text h1,
@@ -1116,10 +1150,18 @@
       .hero-text .hero-meta,
       .hero-text .hero-actions { opacity: 1; }
       .char { opacity: 1; transform: none; animation: none; }
+      #bg-canvas { display: none; }
+      #aurora { display: none; }
+      .noise { display: none; }
+      [data-reveal] { opacity: 1 !important; transform: none !important; transition: none !important; }
+      * { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
     }
   </style>
 </head>
 <body>
+  <!-- Skip to main content for keyboard / screen reader users -->
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+
   <div class="custom-cursor" aria-hidden="true"></div>
 
   <div id="progress-bar" aria-hidden="true"></div>
@@ -1175,6 +1217,9 @@
     <a href="#contact" class="resume-text">RESUME</a>
     <div class="resume-line"></div>
   </div>
+
+  <!-- MAIN CONTENT -->
+  <main id="main-content">
 
   <!-- HERO -->
   <section class="hero" id="hero">
@@ -1704,6 +1749,16 @@
       <span class="mono" style="font-size:0.7rem;color:var(--text-muted);">Designed & Built by Praveen Kumar</span>
     </div>
   </footer>
+  </main><!-- /#main-content -->
+
+  <!-- Three.js loaded at end of body — does NOT block rendering of text/layout above -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.134.0/examples/js/postprocessing/EffectComposer.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.134.0/examples/js/postprocessing/RenderPass.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.134.0/examples/js/shaders/CopyShader.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.134.0/examples/js/postprocessing/ShaderPass.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.134.0/examples/js/shaders/LuminosityHighPassShader.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.134.0/examples/js/postprocessing/UnrealBloomPass.js"></script>
 
   <script>
     // ── THREE.JS SPACE SCENE ──
