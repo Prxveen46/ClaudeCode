@@ -1935,15 +1935,20 @@
           `<span style="display:inline-block;opacity:0;">${c === ' ' ? '&nbsp;' : c}</span>`
         ).join('');
 
+      let _updateContentTimeout = null;
       const updateContent = idx => {
         const titleEl = document.getElementById('mainTitle');
         const descEl = document.getElementById('mainDesc');
         if (!titleEl || !descEl) return;
 
+        if (_updateContentTimeout) { clearTimeout(_updateContentTimeout); _updateContentTimeout = null; }
+        gsap.killTweensOf(titleEl.children);
+        gsap.killTweensOf(descEl);
         gsap.to(titleEl.children, { y: -20, opacity: 0, duration: 0.4, stagger: 0.015, ease: 'power2.in' });
         gsap.to(descEl, { y: -10, opacity: 0, duration: 0.3, ease: 'power2.in' });
 
-        setTimeout(() => {
+        _updateContentTimeout = setTimeout(() => {
+          _updateContentTimeout = null;
           titleEl.innerHTML = splitText(slides[idx].title);
           descEl.textContent = slides[idx].description;
           gsap.set(titleEl.children, { opacity: 0 });
@@ -2174,7 +2179,7 @@
 
       // RESIZE
       window.addEventListener('resize', () => {
-        if (renderer) {
+        if (renderer && shaderMaterial) {
           renderer.setSize(window.innerWidth, window.innerHeight);
           shaderMaterial.uniforms.uResolution.value.set(window.innerWidth, window.innerHeight);
         }
