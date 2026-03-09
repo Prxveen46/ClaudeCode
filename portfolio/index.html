@@ -1315,89 +1315,137 @@
       const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
       renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.toneMapping = THREE.ACESFilmicToneMapping;
+      renderer.toneMappingExposure = 1.0;
 
       const scene = new THREE.Scene();
       const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
       camera.position.z = 5;
 
-      // Background particle field
+      // ── ENVIRONMENT MAP (for glass refraction) ──
+      const pmremGenerator = new THREE.PMREMGenerator(renderer);
+      pmremGenerator.compileEquirectangularShader();
+
+      const envScene = new THREE.Scene();
+      envScene.add(new THREE.AmbientLight(0x111111));
+      const envLight1 = new THREE.DirectionalLight(0x00ffcc, 0.8);
+      envLight1.position.set(2, 3, 2);
+      envScene.add(envLight1);
+      const envLight2 = new THREE.DirectionalLight(0x1a1a2e, 0.4);
+      envLight2.position.set(-2, -1, -2);
+      envScene.add(envLight2);
+      envScene.add(new THREE.Mesh(
+        new THREE.IcosahedronGeometry(1, 1),
+        new THREE.MeshStandardMaterial({ color: 0x080808 })
+      ));
+      const envMap = pmremGenerator.fromScene(envScene, 0, 0.1, 100).texture;
+      scene.environment = envMap;
+      pmremGenerator.dispose();
+
+      // ── LIGHTING ──
+      scene.add(new THREE.AmbientLight(0xffffff, 0.3));
+      const keyLight = new THREE.DirectionalLight(0x00ffcc, 0.6);
+      keyLight.position.set(2, 3, 2);
+      scene.add(keyLight);
+      const rimLight = new THREE.PointLight(0xffffff, 0.4);
+      rimLight.position.set(0, 0, 5);
+      scene.add(rimLight);
+
+      // ── BACKGROUND PARTICLES (subtle star field) ──
       const bgGeo = new THREE.BufferGeometry();
-      const bgCount = 700;
+      const bgCount = 500;
       const bgPos = new Float32Array(bgCount * 3);
       for (let i = 0; i < bgCount * 3; i++) bgPos[i] = (Math.random() - 0.5) * 40;
       bgGeo.setAttribute('position', new THREE.BufferAttribute(bgPos, 3));
-      const bgMat = new THREE.PointsMaterial({ color: 0x00ffcc, size: 0.035, transparent: true, opacity: 0.2 });
+      const bgMat = new THREE.PointsMaterial({ color: 0x00ffcc, size: 0.03, transparent: true, opacity: 0.15 });
       scene.add(new THREE.Points(bgGeo, bgMat));
 
-      // Sphere group
-      const sphereGroup = new THREE.Group();
-      scene.add(sphereGroup);
+      // ── GLASS MATERIAL ──
+      const glassMat = new THREE.MeshPhysicalMaterial({
+        color: 0x1a1a2e,
+        transmission: 0.92,
+        roughness: 0.08,
+        thickness: 0.5,
+        ior: 1.5,
+        envMapIntensity: 1.0,
+        transparent: true,
+        side: THREE.DoubleSide,
+      });
 
-      // Sphere particles — Fibonacci distribution
-      const sGeo = new THREE.BufferGeometry();
-      const sCount = 2000;
-      const sPos = new Float32Array(sCount * 3);
-      const R = 1.8;
-      for (let i = 0; i < sCount; i++) {
-        const phi = Math.acos(1 - 2 * (i + 0.5) / sCount);
-        const theta = Math.PI * (1 + Math.sqrt(5)) * i;
-        sPos[i*3]     = R * Math.sin(phi) * Math.cos(theta);
-        sPos[i*3+1]   = R * Math.cos(phi);
-        sPos[i*3+2]   = R * Math.sin(phi) * Math.sin(theta);
+      // ── WIREFRAME MATERIAL ──
+      const wireMat = new THREE.LineBasicMaterial({
+        color: 0x00ffcc,
+        transparent: true,
+        opacity: 0.35,
+      });
+
+      // ── HELPER: create glass object with wireframe overlay ──
+      function createGlassObject(geometry) {
+        const group = new THREE.Group();
+        group.add(new THREE.Mesh(geometry, glassMat));
+        group.add(new THREE.LineSegments(new THREE.WireframeGeometry(geometry), wireMat));
+        return group;
       }
-      sGeo.setAttribute('position', new THREE.BufferAttribute(sPos, 3));
-      const sMat = new THREE.PointsMaterial({ color: 0x00ffcc, size: 0.022, transparent: true, opacity: 0.9 });
-      sphereGroup.add(new THREE.Points(sGeo, sMat));
 
-      // Connecting lines
-      const lineVerts = [];
-      const pos = sGeo.attributes.position.array;
-      const THRESH = 0.52;
-      for (let i = 0; i < sCount; i++) {
-        if (Math.random() > 0.08) continue;
-        const ax = pos[i*3], ay = pos[i*3+1], az = pos[i*3+2];
-        for (let j = i + 1; j < sCount; j++) {
-          if (Math.random() > 0.12) continue;
-          const bx = pos[j*3], by = pos[j*3+1], bz = pos[j*3+2];
-          if (Math.sqrt((ax-bx)**2+(ay-by)**2+(az-bz)**2) < THRESH) {
-            lineVerts.push(ax,ay,az,bx,by,bz);
-          }
-        }
-      }
-      const lineGeo = new THREE.BufferGeometry();
-      lineGeo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(lineVerts), 3));
-      const lineMat = new THREE.LineBasicMaterial({ color: 0x00ffcc, transparent: true, opacity: 0.12 });
-      sphereGroup.add(new THREE.LineSegments(lineGeo, lineMat));
+      // ── OBJECTS ──
+      const torus = createGlassObject(new THREE.TorusGeometry(1.2, 0.35, 32, 64));
+      const ico   = createGlassObject(new THREE.IcosahedronGeometry(0.6, 0));
+      const octa  = createGlassObject(new THREE.OctahedronGeometry(0.4, 0));
 
-      // Position sphere right of center
-      sphereGroup.position.set(2.0, 0.2, 0);
+      // ── MAIN GROUP ──
+      const glassGroup = new THREE.Group();
+      glassGroup.add(torus);
+      glassGroup.add(ico);
+      glassGroup.add(octa);
+      glassGroup.position.set(2.0, 0.2, 0);
+      scene.add(glassGroup);
 
-      // Mouse tracking
+      // ── MOUSE TRACKING ──
       let mouseX = 0, mouseY = 0, targetX = 0, targetY = 0;
       document.addEventListener('mousemove', e => {
         mouseX = (e.clientX / window.innerWidth - 0.5) * 2;
         mouseY = -(e.clientY / window.innerHeight - 0.5) * 2;
       });
 
-      // Resize
+      // ── RESIZE ──
       window.addEventListener('resize', () => {
         camera.aspect = window.innerWidth / window.innerHeight;
         camera.updateProjectionMatrix();
         renderer.setSize(window.innerWidth, window.innerHeight);
       });
 
-      // Animate
+      // ── ANIMATE ──
+      const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       let frame = 0;
       (function animate() {
         requestAnimationFrame(animate);
         frame++;
-        targetX += (mouseX - targetX) * 0.035;
-        targetY += (mouseY - targetY) * 0.035;
-        sphereGroup.rotation.y = frame * 0.003 + targetX * 0.35;
-        sphereGroup.rotation.x = targetY * 0.2;
+
+        if (!reducedMotion) {
+          torus.rotation.y = frame * 0.003;
+
+          const icoAngle = frame * 0.008;
+          ico.position.x = Math.cos(icoAngle) * 2.0;
+          ico.position.z = Math.sin(icoAngle) * 2.0;
+          ico.position.y = Math.sin(icoAngle * 0.5) * 0.3;
+          ico.rotation.x = frame * 0.005;
+          ico.rotation.y = frame * 0.005;
+
+          const octaAngle = -frame * 0.006;
+          octa.position.x = Math.cos(octaAngle) * 1.5;
+          octa.position.z = Math.sin(octaAngle) * 1.5;
+          octa.position.y = Math.cos(octaAngle * 0.7) * 0.2;
+          octa.rotation.z = frame * 0.004;
+
+          targetX += (mouseX - targetX) * 0.035;
+          targetY += (mouseY - targetY) * 0.035;
+          glassGroup.rotation.y = frame * 0.001 + targetX * 0.35;
+          glassGroup.rotation.x = targetY * 0.2;
+        }
+
         renderer.render(scene, camera);
       })();
-    })(); } catch(e) { /* WebGL unavailable — sphere skipped, rest of page continues */ }
+    })(); } catch(e) { /* WebGL unavailable — glass objects skipped, rest of page continues */ }
 
     // ── NAV ──
     const nav = document.getElementById('nav');
