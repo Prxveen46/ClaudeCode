@@ -1664,10 +1664,6 @@
             <a href="mailto:prxveen46@gmail.com" class="contact-value">prxveen46@gmail.com</a>
           </div>
           <div class="contact-item">
-            <span class="contact-label">PHONE</span>
-            <a href="tel:+918883886881" class="contact-value">+91-8883886881</a>
-          </div>
-          <div class="contact-item">
             <span class="contact-label">LOCATION</span>
             <span class="contact-value">Bengaluru, Karnataka</span>
           </div>
@@ -1906,38 +1902,17 @@
       // ── SMOOTH CAMERA STATE ──
       const smoothCam = { x: 0, y: 30, z: 100 };
       let targetCam = { x: 0, y: 30, z: 100 };
-      let mouseX = 0, mouseY = 0;
+      let mouseX = 0, mouseY = 0, targetMouseX = 0, targetMouseY = 0;
+      const mountainSmooth = mountains.map((m, i) => ({ z: mountainBaseZ[i], visible: true }));
 
       document.addEventListener('mousemove', e => {
-        mouseX = (e.clientX / window.innerWidth - 0.5) * 2;
-        mouseY = -(e.clientY / window.innerHeight - 0.5) * 2;
+        targetMouseX = (e.clientX / window.innerWidth - 0.5) * 2;
+        targetMouseY = -(e.clientY / window.innerHeight - 0.5) * 2;
       });
 
-      // ── SCROLL-DRIVEN CAMERA ──
-      window.addEventListener('scroll', () => {
-        const scrollY = window.scrollY;
-        const maxScroll = document.body.scrollHeight - window.innerHeight;
-        const progress = Math.min(scrollY / maxScroll, 1);
-
-        // Camera moves deeper into scene as user scrolls
-        targetCam.x = 0;
-        targetCam.y = 30 + progress * 20;
-        targetCam.z = 100 - progress * 800;
-
-        // Mountain parallax — fade out mountains as camera passes them
-        mountains.forEach((m, i) => {
-          const speed = 1 + i * 0.9;
-          if (progress > 0.7) {
-            m.visible = false;
-          } else {
-            m.visible = true;
-            m.position.z = mountainBaseZ[i] + scrollY * speed * 0.5;
-          }
-        });
-
-        // Nebula follows furthest mountain
-        nebula.position.z = mountains[3].position.z;
-      }, { passive: true });
+      // ── SCROLL-DRIVEN CAMERA (RAF-batched for smoothness) ──
+      let scrollTarget = 0, smoothScroll = 0;
+      window.addEventListener('scroll', () => { scrollTarget = window.scrollY; }, { passive: true });
 
       // ── RESIZE ──
       window.addEventListener('resize', () => {
@@ -1947,7 +1922,7 @@
         if (composer) composer.setSize(window.innerWidth, window.innerHeight);
       });
 
-      // ── ANIMATE ──
+      // ── ANIMATE (all interpolation in RAF for buttery smoothness) ──
       const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       (function animate() {
         requestAnimationFrame(animate);
@@ -1963,13 +1938,27 @@
         atmosMat.uniforms.time.value = time;
 
         if (!reducedMotion) {
-          // Smooth camera interpolation
-          const ease = 0.05;
-          smoothCam.x += (targetCam.x - smoothCam.x) * ease;
-          smoothCam.y += (targetCam.y - smoothCam.y) * ease;
-          smoothCam.z += (targetCam.z - smoothCam.z) * ease;
+          // Smooth scroll interpolation (lerp in RAF, not in scroll event)
+          smoothScroll += (scrollTarget - smoothScroll) * 0.08;
+          const maxScroll = document.body.scrollHeight - window.innerHeight;
+          const progress = maxScroll > 0 ? Math.min(smoothScroll / maxScroll, 1) : 0;
 
-          // Subtle floating motion + mouse parallax
+          // Target camera from smoothed scroll
+          targetCam.x = 0;
+          targetCam.y = 30 + progress * 20;
+          targetCam.z = 100 - progress * 800;
+
+          // Double-lerp camera for ultra-smooth motion
+          const camEase = 0.035;
+          smoothCam.x += (targetCam.x - smoothCam.x) * camEase;
+          smoothCam.y += (targetCam.y - smoothCam.y) * camEase;
+          smoothCam.z += (targetCam.z - smoothCam.z) * camEase;
+
+          // Smooth mouse parallax (lerp mouse too)
+          mouseX += (targetMouseX - mouseX) * 0.06;
+          mouseY += (targetMouseY - mouseY) * 0.06;
+
+          // Subtle floating motion + smoothed mouse
           const floatX = Math.sin(time * 0.1) * 2 + mouseX * 8;
           const floatY = Math.cos(time * 0.15) * 1 + mouseY * 4;
 
@@ -1978,11 +1967,21 @@
           camera.position.z = smoothCam.z;
           camera.lookAt(0, 10, -600);
 
-          // Mountain subtle sway
+          // Smooth mountain parallax (lerp positions in RAF)
           mountains.forEach((m, i) => {
+            const speed = 1 + i * 0.9;
+            const targetZ = mountainBaseZ[i] + smoothScroll * speed * 0.5;
+            const targetVis = progress <= 0.7;
+            mountainSmooth[i].z += (targetZ - mountainSmooth[i].z) * 0.06;
+            m.position.z = mountainSmooth[i].z;
+            m.visible = targetVis;
+            // Subtle sway
             const pf = 1 + i * 0.5;
             m.position.x = Math.sin(time * 0.1) * 2 * pf;
           });
+
+          // Nebula follows furthest mountain
+          nebula.position.z = mountainSmooth[3].z;
         }
 
         if (composer) {
