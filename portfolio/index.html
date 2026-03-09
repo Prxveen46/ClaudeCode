@@ -604,11 +604,64 @@
       pointer-events: none;
       transition: width 0.08s linear;
     }
+    /* ── AURORA BACKGROUND ── */
+    #aurora {
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+      overflow: hidden;
+    }
+    .aura {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(120px);
+      will-change: transform;
+    }
+    .aura-1 {
+      width: 600px; height: 400px;
+      background: rgba(0, 255, 204, 0.05);
+      top: -100px; left: -100px;
+      animation: drift1 22s ease-in-out infinite alternate;
+    }
+    .aura-2 {
+      width: 500px; height: 500px;
+      background: rgba(80, 32, 128, 0.04);
+      top: 20%; right: -150px;
+      animation: drift2 28s ease-in-out infinite alternate;
+    }
+    .aura-3 {
+      width: 700px; height: 300px;
+      background: rgba(0, 68, 102, 0.03);
+      bottom: -80px; left: 20%;
+      animation: drift3 35s ease-in-out infinite alternate;
+    }
+    @keyframes drift1 {
+      from { transform: translate(0, 0); }
+      to   { transform: translate(120px, 80px); }
+    }
+    @keyframes drift2 {
+      from { transform: translate(0, 0); }
+      to   { transform: translate(-80px, 100px); }
+    }
+    @keyframes drift3 {
+      from { transform: translate(0, 0); }
+      to   { transform: translate(-100px, -60px); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .aura { animation: none; }
+    }
   </style>
 </head>
 <body>
 
   <div id="progress-bar" aria-hidden="true"></div>
+
+  <div id="aurora" aria-hidden="true">
+    <div class="aura aura-1"></div>
+    <div class="aura aura-2"></div>
+    <div class="aura aura-3"></div>
+  </div>
 
   <canvas id="bg-canvas" aria-hidden="true"></canvas>
 
