@@ -665,6 +665,84 @@
     @media (prefers-reduced-motion: reduce) {
       .noise { display: none; }
     }
+
+    /* ── KINETIC TYPOGRAPHY ── */
+
+    /* Hide hero text elements initially — JS will reveal them */
+    .hero-text .eyebrow,
+    .hero-text h1,
+    .hero-text .hero-desc,
+    .hero-text .hero-meta,
+    .hero-text .hero-actions {
+      opacity: 0;
+    }
+
+    /* Individual char spans injected by JS */
+    .char {
+      display: inline-block;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: charRise 0.5s ease forwards;
+    }
+
+    @keyframes charRise {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Shimmer sweep on h1 after chars settle */
+    .hero-text h1.shimmer {
+      background: linear-gradient(
+        90deg,
+        #f0f0f0 0%,
+        #00ffcc 35%,
+        #f0f0f0 50%,
+        #00ffcc 65%,
+        #f0f0f0 100%
+      );
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: shimmerSweep 1.0s ease forwards;
+    }
+
+    @keyframes shimmerSweep {
+      from { background-position: 100% center; }
+      to   { background-position: 0% center; }
+    }
+
+    /* After shimmer: restore original colors */
+    .hero-text h1.shimmer-done {
+      background: none;
+      -webkit-text-fill-color: inherit;
+      color: var(--text-primary);
+    }
+    .hero-text h1.shimmer-done .name-line {
+      color: var(--accent);
+    }
+
+    /* Staggered section reveals */
+    .hero-text .eyebrow.reveal-hero,
+    .hero-text .hero-desc.reveal-hero,
+    .hero-text .hero-meta.reveal-hero,
+    .hero-text .hero-actions.reveal-hero {
+      animation: heroFadeUp 0.5s ease forwards;
+    }
+
+    @keyframes heroFadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* prefers-reduced-motion: show everything immediately */
+    @media (prefers-reduced-motion: reduce) {
+      .hero-text .eyebrow,
+      .hero-text h1,
+      .hero-text .hero-desc,
+      .hero-text .hero-meta,
+      .hero-text .hero-actions { opacity: 1; }
+      .char { opacity: 1; transform: none; animation: none; }
+    }
   </style>
 </head>
 <body>
@@ -1372,6 +1450,69 @@
         const pct = window.scrollY / (document.body.scrollHeight - window.innerHeight) * 100;
         bar.style.width = Math.min(pct, 100) + '%';
       }, { passive: true });
+    })();
+
+    // ── KINETIC TYPOGRAPHY ──
+    (function() {
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+      // Split h1 text nodes into <span class="char"> per character
+      function splitChars(el) {
+        const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+        const nodes = [];
+        let node;
+        while ((node = walker.nextNode())) nodes.push(node);
+        nodes.forEach(textNode => {
+          const frag = document.createDocumentFragment();
+          [...textNode.textContent].forEach(ch => {
+            if (ch === ' ') {
+              frag.appendChild(document.createTextNode(' '));
+            } else {
+              const span = document.createElement('span');
+              span.className = 'char';
+              span.textContent = ch;
+              frag.appendChild(span);
+            }
+          });
+          textNode.parentNode.replaceChild(frag, textNode);
+        });
+        return el.querySelectorAll('.char');
+      }
+
+      const h1 = document.querySelector('.hero-text h1');
+      const eyebrow = document.querySelector('.hero-text .eyebrow');
+      const desc = document.querySelector('.hero-text .hero-desc');
+      const meta = document.querySelector('.hero-text .hero-meta');
+      const actions = document.querySelector('.hero-text .hero-actions');
+
+      const chars = splitChars(h1);
+      let lastCharDelay = 0;
+
+      // Stagger eyebrow first
+      setTimeout(() => {
+        eyebrow.classList.add('reveal-hero');
+      }, 150);
+
+      // Stagger chars in h1 starting at 350ms
+      chars.forEach((span, i) => {
+        const delay = 350 + i * 38;
+        span.style.animationDelay = delay + 'ms';
+        lastCharDelay = delay + 500; // 500ms = charRise duration
+      });
+
+      // After last char settles: shimmer sweep
+      setTimeout(() => {
+        h1.classList.add('shimmer');
+        setTimeout(() => {
+          h1.classList.remove('shimmer');
+          h1.classList.add('shimmer-done');
+        }, 1000);
+      }, lastCharDelay);
+
+      // Stagger remaining hero sections
+      setTimeout(() => desc.classList.add('reveal-hero'), 500);
+      setTimeout(() => meta.classList.add('reveal-hero'), 700);
+      setTimeout(() => actions.classList.add('reveal-hero'), 900);
     })();
   </script>
 </body>
