@@ -667,8 +667,6 @@
       .hero-inner { grid-template-columns: 1fr; }
       .hero-sphere-hint { height: 200px; }
       .about-layout { grid-template-columns: 1fr; gap: 3rem; }
-      .skill-row { grid-template-columns: 1fr; gap: 0.75rem; }
-      .skill-cat { border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; }
       .projects-grid { grid-template-columns: 1fr; }
       .edu-grid { grid-template-columns: 1fr; }
       .cert-grid { grid-template-columns: 1fr; }
@@ -927,53 +925,51 @@
   <!-- SKILLS -->
   <section id="skills">
     <div class="container">
-      <div class="reveal">
-        <div class="section-line"></div>
-        <div class="eyebrow">Skills &amp; Tools</div>
-        <h2 class="section-title">Technical Arsenal</h2>
+      <div>
+        <div class="section-line" data-reveal="left"></div>
+        <div class="eyebrow" data-reveal="up" data-stagger="1">Skills &amp; Tools</div>
+        <h2 class="section-title" data-reveal="up" data-stagger="2">Technical Arsenal</h2>
       </div>
-      <div class="skills-list reveal reveal-d1">
-        <div class="skill-row">
-          <div class="skill-cat">Data Visualization</div>
+      <div class="skills-container">
+        <div class="skill-card" data-reveal="left" data-stagger="3">
+          <div class="skill-card-header">
+            <span class="skill-card-title"><span class="skill-card-icon">📊</span> Data &amp; Analytics</span>
+            <span class="skill-card-chevron">▼</span>
+          </div>
           <div class="skill-pills">
             <span class="pill">Tableau</span>
             <span class="pill">Power BI</span>
             <span class="pill">DAX</span>
             <span class="pill">Dashboarding</span>
             <span class="pill">Data Storytelling</span>
-          </div>
-        </div>
-        <div class="skill-row">
-          <div class="skill-cat">Database &amp; Warehousing</div>
-          <div class="skill-pills">
-            <span class="pill">SQL (Advanced)</span>
-            <span class="pill">Snowflake</span>
-            <span class="pill">Azure Cosmos DB</span>
-            <span class="pill">GCP</span>
-            <span class="pill">Data Modeling</span>
-          </div>
-        </div>
-        <div class="skill-row">
-          <div class="skill-cat">Programming</div>
-          <div class="skill-pills">
-            <span class="pill">Python</span>
-            <span class="pill">R</span>
-            <span class="pill">Scope Language</span>
-            <span class="pill">Predictive Analytics</span>
-            <span class="pill">Data Mining</span>
-          </div>
-        </div>
-        <div class="skill-row">
-          <div class="skill-cat">Marketing Analytics</div>
-          <div class="skill-pills">
             <span class="pill">Customer Segmentation</span>
             <span class="pill">Campaign Optimization</span>
             <span class="pill">Ad Spend Analysis</span>
             <span class="pill">YoY / WoW Trends</span>
           </div>
         </div>
-        <div class="skill-row">
-          <div class="skill-cat">Tools &amp; Platforms</div>
+        <div class="skill-card" data-reveal="right" data-stagger="4">
+          <div class="skill-card-header">
+            <span class="skill-card-title"><span class="skill-card-icon">⚙️</span> Engineering</span>
+            <span class="skill-card-chevron">▼</span>
+          </div>
+          <div class="skill-pills">
+            <span class="pill">Python</span>
+            <span class="pill">R</span>
+            <span class="pill">SQL (Advanced)</span>
+            <span class="pill">Snowflake</span>
+            <span class="pill">Azure Cosmos DB</span>
+            <span class="pill">GCP</span>
+            <span class="pill">Data Modeling</span>
+            <span class="pill">Scope Language</span>
+            <span class="pill">Predictive Analytics</span>
+          </div>
+        </div>
+        <div class="skill-card" data-reveal="left" data-stagger="5">
+          <div class="skill-card-header">
+            <span class="skill-card-title"><span class="skill-card-icon">🛠</span> Tools &amp; Platforms</span>
+            <span class="skill-card-chevron">▼</span>
+          </div>
           <div class="skill-pills">
             <span class="pill">Jira</span>
             <span class="pill">Azure DevOps</span>
@@ -982,8 +978,11 @@
             <span class="pill">Virtual Clusters</span>
           </div>
         </div>
-        <div class="skill-row">
-          <div class="skill-cat">Leadership</div>
+        <div class="skill-card" data-reveal="right" data-stagger="6">
+          <div class="skill-card-header">
+            <span class="skill-card-title"><span class="skill-card-icon">🎯</span> Leadership</span>
+            <span class="skill-card-chevron">▼</span>
+          </div>
           <div class="skill-pills">
             <span class="pill">Cross-Functional Teams</span>
             <span class="pill">Stakeholder Management</span>
@@ -1710,6 +1709,31 @@
         btn.addEventListener('mouseleave', () => {
           btn.style.transform = '';
         });
+      });
+    })();
+
+    // ── SKILL CARDS ──
+    (function() {
+      const cards = document.querySelectorAll('.skill-card');
+      const isMobile = window.matchMedia('(max-width: 900px)').matches;
+
+      function activateCard(card) {
+        cards.forEach(c => c.classList.remove('active'));
+        card.classList.add('active');
+      }
+
+      cards.forEach(card => {
+        if (isMobile) {
+          card.addEventListener('click', () => {
+            if (card.classList.contains('active')) {
+              card.classList.remove('active');
+            } else {
+              activateCard(card);
+            }
+          });
+        } else {
+          card.addEventListener('mouseenter', () => activateCard(card));
+        }
       });
     })();
   </script>
