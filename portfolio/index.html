@@ -298,6 +298,16 @@
       transition: opacity 0.5s ease;
     }
 
+
+    /* WebGL unavailable fallback */
+    .no-webgl .webgl-canvas { display: none; }
+    .no-webgl .canvas-overlay { display: none; }
+    .no-webgl .hero {
+      background: linear-gradient(135deg, #0b080c 0%, #1a1028 60%, #0b080c 100%);
+      display: flex;
+      align-items: center;
+    }
+    .no-webgl .slide-content { position: relative; bottom: auto; left: auto; padding: 0 2rem; }
     .hero .webgl-canvas { opacity: 0; transition: opacity 0.8s ease; }
     .hero.loaded .webgl-canvas { opacity: 1; }
 
