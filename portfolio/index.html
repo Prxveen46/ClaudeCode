@@ -671,15 +671,6 @@
 
     /* ── KINETIC TYPOGRAPHY ── */
 
-    /* Hide hero text elements initially — JS will reveal them */
-    .hero-text .eyebrow,
-    .hero-text h1,
-    .hero-text .hero-desc,
-    .hero-text .hero-meta,
-    .hero-text .hero-actions {
-      opacity: 0;
-    }
-
     /* Individual char spans injected by JS */
     .char {
       display: inline-block;
@@ -1319,7 +1310,7 @@
 
   <script>
     // ── THREE.JS SCENE ──
-    (function() {
+    try { (function() {
       const canvas = document.getElementById('bg-canvas');
       const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
@@ -1406,7 +1397,7 @@
         sphereGroup.rotation.x = targetY * 0.2;
         renderer.render(scene, camera);
       })();
-    })();
+    })(); } catch(e) { /* WebGL unavailable — sphere skipped, rest of page continues */ }
 
     // ── NAV ──
     const nav = document.getElementById('nav');
@@ -1457,7 +1448,16 @@
 
     // ── KINETIC TYPOGRAPHY ──
     (function() {
+      // Progressive enhancement: query elements before any early return
+      const eyebrow = document.querySelector('.hero-text .eyebrow');
+      const desc    = document.querySelector('.hero-text .hero-desc');
+      const meta    = document.querySelector('.hero-text .hero-meta');
+      const actions = document.querySelector('.hero-text .hero-actions');
+
       if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+      // Hide elements via JS — visible by default (no CSS opacity:0), JS reveals with animation
+      [eyebrow, desc, meta, actions].forEach(el => { if (el) el.style.opacity = '0'; });
 
       // Split h1 text nodes into <span class="char"> per character
       function splitChars(el) {
@@ -1483,17 +1483,13 @@
       }
 
       const h1 = document.querySelector('.hero-text h1');
-      const eyebrow = document.querySelector('.hero-text .eyebrow');
-      const desc = document.querySelector('.hero-text .hero-desc');
-      const meta = document.querySelector('.hero-text .hero-meta');
-      const actions = document.querySelector('.hero-text .hero-actions');
-
       const chars = splitChars(h1);
-      h1.style.opacity = '1'; // chars are individually hidden; parent must be visible
+      h1.style.opacity = '1'; // chars are individually hidden via CSS; parent must be visible
       let lastCharDelay = 0;
 
       // Stagger eyebrow first
       setTimeout(() => {
+        eyebrow.style.opacity = '';
         eyebrow.classList.add('reveal-hero');
       }, 150);
 
@@ -1514,9 +1510,9 @@
       }, lastCharDelay);
 
       // Stagger remaining hero sections
-      setTimeout(() => desc.classList.add('reveal-hero'), 500);
-      setTimeout(() => meta.classList.add('reveal-hero'), 700);
-      setTimeout(() => actions.classList.add('reveal-hero'), 900);
+      setTimeout(() => { desc.style.opacity = '';    desc.classList.add('reveal-hero');    }, 500);
+      setTimeout(() => { meta.style.opacity = '';    meta.classList.add('reveal-hero');    }, 700);
+      setTimeout(() => { actions.style.opacity = ''; actions.classList.add('reveal-hero'); }, 900);
     })();
 
     // ── MAGNETIC BUTTONS ──
