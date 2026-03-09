@@ -651,6 +651,20 @@
     @media (prefers-reduced-motion: reduce) {
       .aura { animation: none; }
     }
+
+    /* ── FILM GRAIN ── */
+    .noise {
+      position: fixed;
+      inset: 0;
+      z-index: 2;
+      pointer-events: none;
+      filter: url(#grain);
+      mix-blend-mode: overlay;
+      opacity: 0.04;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .noise { display: none; }
+    }
   </style>
 </head>
 <body>
@@ -662,6 +676,15 @@
     <div class="aura aura-2"></div>
     <div class="aura aura-3"></div>
   </div>
+
+  <!-- Film grain SVG filter -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <filter id="grain">
+      <feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch"/>
+      <feColorMatrix type="saturate" values="0"/>
+    </filter>
+  </svg>
+  <div class="noise" aria-hidden="true"></div>
 
   <canvas id="bg-canvas" aria-hidden="true"></canvas>
 
