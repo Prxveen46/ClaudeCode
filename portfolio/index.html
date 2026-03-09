@@ -1824,6 +1824,33 @@
         }
       });
     })();
+
+    // ── HORIZONTAL SCROLL PROJECTS ──
+    (function() {
+      const section = document.getElementById('projects');
+      const track = document.querySelector('.projects-track');
+      if (!section || !track || window.innerWidth < 769) return;
+
+      function updateScroll() {
+        const rect = section.getBoundingClientRect();
+        const sectionHeight = section.offsetHeight - window.innerHeight;
+        if (sectionHeight <= 0) return;
+        const progress = Math.max(0, Math.min(1, -rect.top / sectionHeight));
+        const maxTranslate = track.scrollWidth - window.innerWidth + 100;
+        track.style.transform = `translateX(${-progress * maxTranslate}px)`;
+      }
+
+      window.addEventListener('scroll', updateScroll, { passive: true });
+      updateScroll();
+
+      // Trigger bar animations when cards become visible in viewport
+      const cardObs = new IntersectionObserver(entries => {
+        entries.forEach(e => {
+          if (e.isIntersecting) { e.target.classList.add('visible'); cardObs.unobserve(e.target); }
+        });
+      }, { threshold: 0.3 });
+      track.querySelectorAll('.project-card').forEach(c => cardObs.observe(c));
+    })();
   </script>
 </body>
 </html>
