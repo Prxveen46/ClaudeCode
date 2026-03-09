@@ -943,12 +943,13 @@
       .social-sidebar { display: none; }
       .resume-link { display: none; }
       .custom-cursor { display: none; }
-      .tl-entry { grid-template-columns: 1fr; gap: 0.5rem; }
+      .tl-entry { grid-template-columns: 1fr; gap: 0.75rem; }
       .tl-year { grid-column: 1; grid-row: 1; justify-self: start; }
-      .tl-content-left, .tl-content-right { grid-column: 1; text-align: left; padding: 0; }
+      .tl-content-left { grid-column: 1; grid-row: 2; text-align: left; padding: 0; }
+      .tl-content-right { grid-column: 1; grid-row: 3; text-align: left; padding: 0; }
       .tl-content-left .job-bullets li { padding-left: 1rem; padding-right: 0; }
       .tl-content-left .job-bullets li::before { left: 0; right: auto; }
-      .tl-center-line { left: 0; transform: none; }
+      .tl-center-line { left: 12px; transform: none; }
     }
     @media (max-width: 600px) {
       section { padding: 4rem 0; }
