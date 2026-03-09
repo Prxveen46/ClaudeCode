@@ -1324,7 +1324,6 @@
 
       // ── ENVIRONMENT MAP (for glass refraction) ──
       const pmremGenerator = new THREE.PMREMGenerator(renderer);
-      pmremGenerator.compileEquirectangularShader();
 
       const envScene = new THREE.Scene();
       envScene.add(new THREE.AmbientLight(0x111111));
@@ -1341,6 +1340,10 @@
       const envMap = pmremGenerator.fromScene(envScene, 0, 0.1, 100).texture;
       scene.environment = envMap;
       pmremGenerator.dispose();
+      envScene.traverse(obj => {
+        if (obj.geometry) obj.geometry.dispose();
+        if (obj.material) obj.material.dispose();
+      });
 
       // ── LIGHTING ──
       scene.add(new THREE.AmbientLight(0xffffff, 0.3));
@@ -1361,16 +1364,30 @@
       scene.add(new THREE.Points(bgGeo, bgMat));
 
       // ── GLASS MATERIAL ──
-      const glassMat = new THREE.MeshPhysicalMaterial({
-        color: 0x1a1a2e,
-        transmission: 0.92,
-        roughness: 0.08,
-        thickness: 0.5,
-        ior: 1.5,
-        envMapIntensity: 1.0,
-        transparent: true,
-        side: THREE.DoubleSide,
-      });
+      let glassMat;
+      try {
+        glassMat = new THREE.MeshPhysicalMaterial({
+          color: 0x1a1a2e,
+          transmission: 0.92,
+          roughness: 0.08,
+          thickness: 0.5,
+          ior: 1.5,
+          envMapIntensity: 1.0,
+          transparent: true,
+          side: THREE.DoubleSide,
+        });
+        // Force a test compile to catch GPU issues early
+        renderer.compile(scene, camera);
+      } catch(matErr) {
+        glassMat = new THREE.MeshStandardMaterial({
+          color: 0x1a1a2e,
+          transparent: true,
+          opacity: 0.15,
+          roughness: 0.2,
+          metalness: 0.8,
+          side: THREE.DoubleSide,
+        });
+      }
 
       // ── WIREFRAME MATERIAL ──
       const wireMat = new THREE.LineBasicMaterial({
