@@ -381,6 +381,27 @@
       cursor: default;
     }
     .pill:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
+    .pill-new {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: var(--accent-dim);
+      position: relative;
+    }
+    .pill-new::after {
+      content: 'NEW';
+      position: absolute;
+      top: -8px;
+      right: -6px;
+      font-size: 0.45rem;
+      font-family: var(--font-mono);
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      background: var(--accent-secondary);
+      color: #0b080c;
+      padding: 1px 4px;
+      border-radius: 3px;
+      line-height: 1.3;
+    }
     .skill-card::before,
     .skill-card::after {
       content: '';
@@ -1195,6 +1216,7 @@
         <div class="about-text">
           <p>I'm a results-driven Senior Data Analyst based in <strong>Bengaluru</strong> with 9+ years spanning Marketing Analytics, Business Intelligence, and Information Technology.</p>
           <p>Specializing in <strong>SQL, Snowflake, Tableau, Power BI, and Python</strong> — with deep expertise in digital marketing analytics, customer segmentation, behavior modeling, and campaign optimization.</p>
+          <p>Currently exploring the AI frontier with tools like <strong>21st.dev, Google Stitch, and Nano Banana</strong> — leveraging generative AI for rapid UI prototyping, intelligent image generation, and AI-augmented analytics workflows.</p>
           <p>Across enterprise clients like <strong>Microsoft, Amazon, Nike, and Audi</strong>, I've engineered automated data pipelines, built interactive dashboards, and delivered insights that drive measurable revenue growth.</p>
         </div>
         <div class="about-stats" data-reveal="right" data-stagger="3">
@@ -1283,6 +1305,21 @@
             <span class="pill">Stakeholder Management</span>
             <span class="pill">Agile / Scrum</span>
             <span class="pill">Requirements Gathering</span>
+          </div>
+        </div>
+        <div class="skill-card" data-reveal="left" data-stagger="7">
+          <div class="skill-card-header">
+            <span class="skill-card-title"><span class="skill-card-icon">🤖</span> AI &amp; Generative</span>
+            <span class="skill-card-chevron">▼</span>
+          </div>
+          <div class="skill-pills">
+            <span class="pill pill-new">21st.dev</span>
+            <span class="pill pill-new">Google Stitch</span>
+            <span class="pill pill-new">Nano Banana</span>
+            <span class="pill">Gemini</span>
+            <span class="pill">AI UI Design</span>
+            <span class="pill">Prompt Engineering</span>
+            <span class="pill">AI Image Generation</span>
           </div>
         </div>
       </div>
