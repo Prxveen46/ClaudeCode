@@ -1181,7 +1181,6 @@
   </svg>
   <div class="noise" aria-hidden="true"></div>
 
-  <canvas id="bg-canvas" aria-hidden="true"></canvas>
 
   <!-- NAV -->
   <nav id="nav">
@@ -1223,28 +1222,23 @@
 
   <!-- HERO -->
   <section class="hero" id="hero">
-    <div class="container hero-inner">
-      <div class="hero-text">
-        <div class="eyebrow">Senior Data Analyst</div>
-        <h1>Praveen<br><span class="name-line">Kumar.</span></h1>
-        <p class="hero-desc">
-          9+ years transforming complex datasets into business strategy —
-          Marketing Analytics, BI, and enterprise insights for
-          <span class="accent">Microsoft, Amazon, Nike &amp; Audi.</span>
-        </p>
-        <div class="hero-meta">
-          <span class="mono" style="font-size:0.75rem;color:var(--text-muted);">Bengaluru, India</span>
-          <span class="hero-dot"></span>
-          <span class="available-badge">
-            <span class="pulse"></span>Open to opportunities
-          </span>
-        </div>
-        <div class="hero-actions">
-          <a href="#contact" class="btn btn-primary">Get In Touch</a>
-          <a href="#experience" class="btn btn-ghost">View Experience</a>
-        </div>
-      </div>
+    <canvas class="webgl-canvas" aria-hidden="true"></canvas>
+    <div class="canvas-overlay" aria-hidden="true"></div>
+    <div class="slide-content">
+      <p class="slide-eyebrow" id="slideEyebrow">Senior Data Analyst</p>
+      <h1 class="slide-title" id="mainTitle"></h1>
+      <p class="slide-description" id="mainDesc"></p>
     </div>
+    <nav class="slides-navigation" id="slidesNav" aria-label="Slide navigation"></nav>
+    <div class="slide-counter" aria-hidden="true">
+      <span id="slideNumber">01</span>
+      <span class="counter-sep"> / </span>
+      <span id="slideTotal">05</span>
+    </div>
+    <a href="#about" class="scroll-cue" id="scrollCue" aria-label="Scroll to content">
+      <span class="scroll-arrow">↓</span>
+      <span class="scroll-label">SCROLL</span>
+    </a>
   </section>
 
   <!-- ABOUT -->
