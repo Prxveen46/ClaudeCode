@@ -1489,6 +1489,7 @@
       const actions = document.querySelector('.hero-text .hero-actions');
 
       const chars = splitChars(h1);
+      h1.style.opacity = '1'; // chars are individually hidden; parent must be visible
       let lastCharDelay = 0;
 
       // Stagger eyebrow first
