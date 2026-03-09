@@ -735,56 +735,88 @@
     .cert-name { font-size: 0.875rem; font-weight: 600; margin-bottom: 0.2rem; }
     .cert-issuer { font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-muted); }
 
-    /* ── CONTACT ── */
-    .contact-layout {
+    /* ── CONTACT FOOTER ── */
+    .contact-footer {
       display: grid;
-      grid-template-columns: 0.85fr 1.15fr;
-      gap: 4rem;
-      align-items: start;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 3rem;
+      padding: 3rem 0 2rem;
+      border-top: 1px solid var(--border);
     }
-    .contact-intro { font-size: 0.95rem; color: var(--text-secondary); line-height: 1.8; margin-bottom: 2.5rem; }
-    .contact-links { display: flex; flex-direction: column; }
-    .contact-link {
+    .contact-col {
       display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+    .contact-item {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+    .contact-label {
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.15em;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+    .contact-value {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+    a.contact-value:hover {
+      color: var(--accent);
+    }
+    .contact-col-social {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+    .social-link-row {
+      display: flex;
+      justify-content: space-between;
       align-items: center;
-      gap: 1.5rem;
-      padding: 1rem 0;
+      padding: 0.8rem 0;
       border-bottom: 1px solid var(--border);
       text-decoration: none;
       color: var(--text-secondary);
       font-size: 0.9rem;
-      transition: color var(--transition);
+      transition: color 0.3s ease, padding-left 0.3s ease;
     }
-    .contact-link:hover { color: var(--accent); }
-    .contact-link:first-child { border-top: 1px solid var(--border); }
-    .contact-link-label {
-      font-size: 0.65rem;
-      letter-spacing: 0.12em;
-      color: var(--text-muted);
-      width: 80px;
-      flex-shrink: 0;
-      font-family: var(--font-mono);
+    .social-link-row:first-child {
+      border-top: 1px solid var(--border);
     }
-    .form-card { padding: 2.5rem; }
-    .form-grid { display: flex; flex-direction: column; gap: 1.25rem; }
-    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
-    .field-group { display: flex; flex-direction: column; gap: 0.4rem; }
-    .field-label { font-size: 0.65rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-muted); font-family: var(--font-mono); }
-    .field-input, .field-textarea {
-      background: rgba(255,255,255,0.03);
-      border: 1px solid var(--border);
-      padding: 0.8rem 1rem;
+    .social-link-row:hover {
+      color: var(--accent);
+      padding-left: 0.5rem;
+    }
+    .social-link-row .arrow {
+      font-size: 1.1rem;
+      transition: transform 0.3s ease;
+    }
+    .social-link-row:hover .arrow {
+      transform: translateX(4px);
+    }
+    .contact-col-credits {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .credits-tagline {
+      font-size: 1.2rem;
+      font-weight: 500;
       color: var(--text-primary);
-      font-family: var(--font-sans);
-      font-size: 0.9rem;
-      outline: none;
-      transition: border-color var(--transition);
+      line-height: 1.5;
     }
-    .field-input:focus, .field-textarea:focus {
-      border-color: var(--accent);
-      background: rgba(194,164,255,0.03);
+    .credits-note {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      letter-spacing: 0.05em;
+      line-height: 1.7;
     }
-    .field-textarea { min-height: 120px; resize: vertical; }
 
     /* ── FOOTER ── */
     footer {
@@ -905,8 +937,7 @@
       .project-card { min-width: 100%; max-width: 100%; }
       .edu-grid { grid-template-columns: 1fr; }
       .cert-grid { grid-template-columns: 1fr; }
-      .contact-layout { grid-template-columns: 1fr; gap: 3rem; }
-      .form-row { grid-template-columns: 1fr; }
+      .contact-footer { grid-template-columns: 1fr; gap: 2rem; }
       .footer-inner { flex-direction: column; gap: 0.5rem; text-align: center; }
       .nav-links { display: none; }
       .social-sidebar { display: none; }
@@ -1599,51 +1630,39 @@
   <!-- CONTACT -->
   <section id="contact">
     <div class="container">
-      <div>
-        <h2 class="section-heading-large" data-reveal="up" data-stagger="2">GET IN <span class="accent-word">TOUCH</span></h2>
-      </div>
-      <div class="contact-layout" data-reveal="up" data-stagger="3">
-        <div class="contact-info">
-          <p class="contact-intro">Whether you're looking for a Senior Data Analyst, need analytics consulting, or want to discuss a project — I'd love to hear from you.</p>
-          <div class="contact-links">
-            <a href="mailto:prxveen46@gmail.com" class="contact-link">
-              <span class="contact-link-label">EMAIL</span>
-              <span>prxveen46@gmail.com</span>
-            </a>
-            <a href="tel:+918883886881" class="contact-link">
-              <span class="contact-link-label">PHONE</span>
-              <span>+91-8883886881</span>
-            </a>
-            <a href="https://www.linkedin.com/in/praveenvr46/" target="_blank" rel="noopener" class="contact-link">
-              <span class="contact-link-label">LINKEDIN</span>
-              <span>praveenvr46</span>
-            </a>
-            <div class="contact-link" style="cursor:default">
-              <span class="contact-link-label">LOCATION</span>
-              <span>Bengaluru, Karnataka</span>
-            </div>
+      <h2 class="section-heading-large" data-reveal="up" data-stagger="1">GET IN <span class="accent-word">TOUCH</span></h2>
+      <div class="contact-footer" data-reveal="up" data-stagger="2">
+        <div class="contact-col">
+          <div class="contact-item">
+            <span class="contact-label">EMAIL</span>
+            <a href="mailto:prxveen46@gmail.com" class="contact-value">prxveen46@gmail.com</a>
+          </div>
+          <div class="contact-item">
+            <span class="contact-label">PHONE</span>
+            <a href="tel:+918883886881" class="contact-value">+91-8883886881</a>
+          </div>
+          <div class="contact-item">
+            <span class="contact-label">LOCATION</span>
+            <span class="contact-value">Bengaluru, Karnataka</span>
           </div>
         </div>
-        <div class="glass-card form-card">
-          <form class="form-grid" onsubmit="handleFormSubmit(event)">
-            <div class="form-row">
-              <div class="field-group">
-                <label class="field-label" for="field-name">Name</label>
-                <input id="field-name" type="text" class="field-input" placeholder="Your full name" required>
-              </div>
-              <div class="field-group">
-                <label class="field-label" for="field-email">Email</label>
-                <input id="field-email" type="email" class="field-input" placeholder="your@email.com" required>
-              </div>
-            </div>
-            <div class="field-group">
-              <label class="field-label" for="field-message">Message</label>
-              <textarea id="field-message" class="field-textarea" placeholder="Tell me about your project or opportunity..." required></textarea>
-            </div>
-            <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;padding:1rem;">
-              Send Message →
-            </button>
-          </form>
+        <div class="contact-col contact-col-social">
+          <a href="https://github.com/Prxveen46" target="_blank" rel="noopener" class="social-link-row">
+            <span>GitHub</span>
+            <span class="arrow">&rarr;</span>
+          </a>
+          <a href="https://www.linkedin.com/in/praveenvr46/" target="_blank" rel="noopener" class="social-link-row">
+            <span>LinkedIn</span>
+            <span class="arrow">&rarr;</span>
+          </a>
+          <a href="https://x.com/" target="_blank" rel="noopener" class="social-link-row">
+            <span>X / Twitter</span>
+            <span class="arrow">&rarr;</span>
+          </a>
+        </div>
+        <div class="contact-col contact-col-credits">
+          <p class="credits-tagline">Let's build something<br><span class="accent">meaningful</span> together.</p>
+          <p class="credits-note">&copy; 2026 Praveen Kumar<br>Senior Data Analyst &middot; Bengaluru</p>
         </div>
       </div>
     </div>
@@ -1652,8 +1671,7 @@
   <!-- FOOTER -->
   <footer>
     <div class="container footer-inner">
-      <span class="mono" style="font-size:0.75rem;color:var(--text-muted);">© 2026 Praveen Kumar</span>
-      <span class="mono" style="font-size:0.75rem;color:var(--text-muted);">Senior Data Analyst · Bengaluru, India</span>
+      <span class="mono" style="font-size:0.7rem;color:var(--text-muted);">Designed & Built by Praveen Kumar</span>
     </div>
   </footer>
 
@@ -1875,12 +1893,6 @@
         card.style.transition = 'transform 0.4s ease, border-color 0.25s ease';
       });
     });
-
-    // ── FORM ──
-    window.handleFormSubmit = function(e) {
-      e.preventDefault();
-      e.target.innerHTML = '<p style="color:var(--accent);font-family:var(--font-mono);font-size:0.875rem;padding:2rem 0;text-align:center;letter-spacing:0.05em;">✓ MESSAGE RECEIVED — I\'ll be in touch soon.</p>';
-    }
 
     // ── SCROLL PROGRESS ──
     (function() {
