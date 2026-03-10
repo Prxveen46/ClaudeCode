@@ -1925,6 +1925,7 @@
       }
 
       const h1 = document.querySelector('.hero-text h1');
+      if (!h1) return; // Guard: new Spline hero has no .hero-text — skip kinetic typography
       const chars = splitChars(h1);
       h1.style.opacity = '1'; // chars are individually hidden via CSS; parent must be visible
       let lastCharDelay = 0;
