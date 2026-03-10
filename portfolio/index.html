@@ -215,7 +215,7 @@
       bottom: 14vh;
       left: 6vw;
       z-index: 3;
-      max-width: 560px;
+      max-width: 640px;
     }
 
     .hero-eyebrow {
@@ -404,7 +404,7 @@
     .about-layout {
       display: grid;
       grid-template-columns: 1.2fr 0.8fr;
-      gap: 5rem;
+      gap: 3rem;
       align-items: start;
     }
     .about-text p { color: var(--text-secondary); font-size: 1.1rem; line-height: 1.8; margin-bottom: 1.5rem; }
@@ -610,6 +610,10 @@
       padding: 1.25rem 1.5rem;
       position: relative;
       border-radius: 10px;
+      background: rgba(28, 22, 36, 0.95) !important;
+      border: 1px solid rgba(194, 164, 255, 0.18) !important;
+      border-left: 3px solid var(--accent) !important;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.4), inset 0 1px 0 rgba(194,164,255,0.06);
     }
     .tl-dot-center {
       display: none; /* visual dots handled by year badges */
@@ -709,8 +713,8 @@
       will-change: transform;
     }
     .project-card {
-      min-width: 50vw;
-      max-width: 50vw;
+      min-width: 35vw;
+      max-width: 35vw;
       padding: 2rem;
       position: relative;
       overflow: hidden;
@@ -1060,7 +1064,7 @@
     /* ── LARGE SECTION HEADINGS ── */
     .section-heading-large {
       font-family: var(--font-heading);
-      font-size: clamp(2.5rem, 6vw, 5rem);
+      font-size: clamp(2rem, 4vw, 3.2rem);
       font-weight: 800;
       text-transform: uppercase;
       letter-spacing: 0.15em;
