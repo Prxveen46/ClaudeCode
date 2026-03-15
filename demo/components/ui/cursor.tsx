@@ -40,7 +40,7 @@ export default function Cursor() {
       document.documentElement.removeEventListener('mouseleave', leave)
       document.documentElement.removeEventListener('mouseenter', enter)
     }
-  }, [visible])
+  }, [visible, mx, my])
 
   if (typeof window === 'undefined') return null
 
