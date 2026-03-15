@@ -1,3 +1,6 @@
 {
-  "outputDirectory": "portfolio"
+  "buildCommand": "cd demo && npm install && npm run build",
+  "outputDirectory": "demo/.next",
+  "framework": "nextjs",
+  "installCommand": "echo 'install handled by buildCommand'"
 }
