@@ -1,33 +1,366 @@
+@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200;12..96,300;12..96,400;12..96,600;12..96,700;12..96,800&family=JetBrains+Mono:wght@300;400;500;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* ── DESIGN TOKENS ── */
+:root {
+  /* Carbon-black with a faint green undertone — wet tarmac under floodlights */
+  --bg:        #090C09;
+  --bg-2:      #0D1109;
+  --surface:   #111512;
+  --surface-2: #171B15;
+  --border:    #1D2319;
+  --border-hi: #2B3326;
+
+  /* Warm green-tinted text — like Lando's lime visor reflecting on white */
+  --text-1: #EDF8E8;
+  --text-2: #7A8B72;
+  --text-3: #3D4C38;
+
+  /* PRIMARY: Lando Norris Fluorescent Lime */
+  --accent:      #DFFF00;
+  --accent-dim:  rgba(223,255,0,0.10);
+  --accent-glow: rgba(223,255,0,0.30);
+  --accent-mid:  rgba(223,255,0,0.50);
+
+  /* SECONDARY: DRS Cyan — depth / distance / cool */
+  --accent-2:      #00E5FF;
+  --accent-2-dim:  rgba(0,229,255,0.09);
+  --accent-2-glow: rgba(0,229,255,0.22);
+
+  /* DANGER: Red sector flag */
+  --red:    #FF3D00;
+  --orange: #FF7A00;
+
+  --font-display: 'Bricolage Grotesque', sans-serif;
+  --font-body:    'Bricolage Grotesque', sans-serif;
+  --font-mono:    'JetBrains Mono', monospace;
+
+  --radius:    8px;
+  --radius-lg: 12px;
+  --max-w:     1100px;
+  --ease:      cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ── RESET ── */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
 html {
+  scroll-behavior: smooth;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-:root {
-  --background: 0 0% 100%;
-  --foreground: 0 0% 3.6%;
-  --card: 0 0% 100%;
-  --card-foreground: 0 0% 3.6%;
-  --muted: 0 0% 96.1%;
-  --muted-foreground: 0 0% 45.1%;
-  --border: 0 0% 89.8%;
-  --ring: 0 0% 3.6%;
+body {
+  /* Atmospheric layered background:
+     - Top bloom: dark forest green ambient (circuit floodlights)
+     - Bottom-right: deep cyan glow (distant city through the track)
+     - Base: carbon-black with green undertone */
+  background:
+    radial-gradient(ellipse 90% 55% at 50% -5%, rgba(18,38,12,0.92) 0%, transparent 65%),
+    radial-gradient(ellipse 55% 35% at 95% 100%, rgba(0,50,45,0.35) 0%, transparent 60%),
+    var(--bg);
+  color: var(--text-1);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.6;
+  overflow-x: hidden;
+  min-height: 100vh;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: 0 0% 3.6%;
-    --foreground: 0 0% 98%;
-    --card: 0 0% 10%;
-    --card-foreground: 0 0% 98%;
-    --muted: 0 0% 14.9%;
-    --muted-foreground: 0 0% 63.9%;
-    --border: 0 0% 14.9%;
-    --ring: 0 0% 83.1%;
-  }
+/* ── CUSTOM CURSOR ── */
+html, body, a, button, input, textarea, [role="button"] {
+  cursor: none !important;
+}
+
+/* ── GRAIN OVERLAY ── */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9997;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  opacity: 0.04;
+  mix-blend-mode: overlay;
+}
+
+/* ── PROGRESS BAR ── */
+#progress-bar {
+  position: fixed;
+  top: 0; left: 0;
+  height: 2px;
+  width: 0%;
+  background: linear-gradient(90deg, var(--accent), rgba(223,255,0,0.4));
+  z-index: 1000;
+  pointer-events: none;
+  transition: width 0.08s linear;
+  box-shadow: 0 0 12px var(--accent-glow);
+}
+
+/* ── GLASS CARD (warm carbon glassmorphism) ── */
+.glass {
+  background: rgba(14,18,12,0.88);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+.glass:hover {
+  border-color: rgba(223,255,0,0.22);
+  box-shadow:
+    0 0 28px rgba(223,255,0,0.07),
+    0 0 60px rgba(0,229,255,0.04),
+    inset 0 0 24px rgba(223,255,0,0.025);
+}
+
+/* ── CARBON FIBER TEXTURE ── */
+.carbon {
+  background-color: var(--bg);
+  background-image:
+    repeating-linear-gradient(
+      45deg,
+      rgba(255,255,255,0.016) 0px,
+      rgba(255,255,255,0.016) 1px,
+      transparent 1px,
+      transparent 10px
+    ),
+    repeating-linear-gradient(
+      -45deg,
+      rgba(255,255,255,0.016) 0px,
+      rgba(255,255,255,0.016) 1px,
+      transparent 1px,
+      transparent 10px
+    );
+}
+
+/* ── SPEED LINES BACKGROUND ── */
+.speed-lines {
+  background-image:
+    repeating-linear-gradient(
+      87deg,
+      transparent 0px,
+      transparent 140px,
+      rgba(223,255,0,0.02) 140px,
+      rgba(223,255,0,0.02) 141px
+    );
+}
+
+/* ── DOT GRID ── */
+.dot-grid {
+  background-image: radial-gradient(rgba(255,255,255,0.045) 1px, transparent 1px);
+  background-size: 36px 36px;
+}
+
+/* ── LAYOUT ── */
+.container {
+  max-width: var(--max-w);
+  margin: 0 auto;
+  padding: 0 2.5rem;
+}
+
+section {
+  position: relative;
+  z-index: 1;
+  padding: 7rem 0;
+}
+
+/* ── TYPOGRAPHY ── */
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 1.0;
+}
+h1 { font-size: clamp(3.5rem, 8vw, 7rem); }
+h2 { font-size: clamp(2rem, 4vw, 2.75rem); }
+
+/* ── EYEBROW ── */
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.eyebrow::before {
+  content: '//';
+  color: var(--text-3);
+  letter-spacing: 0;
+  font-size: 0.65rem;
+}
+
+/* ── SECTION LABEL ── */
+.section-label {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 3.5rem;
+}
+.section-label::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, var(--border-hi), transparent);
+}
+
+/* ── DIVIDER ── */
+.divider {
+  height: 1px;
+  background: var(--border);
+}
+
+/* ── BUTTONS (sharp corners = F1 precision) ── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.75rem;
+  border-radius: 4px;
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: none !important;
+  border: none;
+  transition: all 0.22s var(--ease);
+  white-space: nowrap;
+  font-weight: 700;
+}
+.btn-primary {
+  background: var(--accent);
+  color: #0D0D0D;
+}
+.btn-primary:hover {
+  background: #EEFF44;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 32px rgba(223,255,0,0.35);
+}
+.btn-ghost {
+  background: transparent;
+  color: var(--text-1);
+  border: 1px solid var(--border-hi);
+}
+.btn-ghost:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  transform: translateY(-2px);
+}
+
+/* ── PILLS ── */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.75rem;
+  border-radius: 3px;
+  background: var(--accent-dim);
+  border: 1px solid rgba(223,255,0,0.2);
+  font-size: 0.72rem;
+  color: var(--accent);
+  font-family: var(--font-mono);
+  font-weight: 500;
+  transition: all 0.2s ease;
+  cursor: none !important;
+}
+.pill:hover {
+  background: rgba(223,255,0,0.15);
+  border-color: rgba(223,255,0,0.4);
+}
+
+/* ── TECH TAG ── */
+.tech-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.2rem 0.6rem;
+  border-radius: 3px;
+  border: 1px solid var(--border-hi);
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  color: var(--text-3);
+  letter-spacing: 0.06em;
+  background: transparent;
+}
+
+/* ── PULSE DOT ── */
+@keyframes pulse-ring {
+  0%,100% { box-shadow: 0 0 0 0 rgba(223,255,0,0.6); }
+  50%      { box-shadow: 0 0 0 6px rgba(223,255,0,0); }
+}
+.pulse {
+  display: inline-block;
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  animation: pulse-ring 2s infinite;
+  flex-shrink: 0;
+}
+
+/* ── SECTOR BADGE ── */
+.sector-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: var(--font-mono);
+  font-size: 0.52rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--accent);
+  background: var(--accent-dim);
+  border: 1px solid rgba(223,255,0,0.2);
+  padding: 0.2rem 0.65rem;
+  border-radius: 3px;
+}
+
+/* ── SCAN LINE ── */
+@keyframes scan {
+  from { transform: translateX(-100%); }
+  to   { transform: translateX(200%); }
+}
+.scan-line::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent       0%,
+    rgba(0,229,255,0.04)  25%,
+    rgba(223,255,0,0.07)  50%,
+    rgba(0,229,255,0.04)  75%,
+    transparent       100%
+  );
+  animation: scan 4s ease-in-out infinite;
+  pointer-events: none;
+}
+
+/* ── TELEMETRY BAR ── */
+@keyframes bar-fill {
+  from { width: 0%; }
+}
+.telemetry-bar {
+  height: 2px;
+  background: var(--border);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.telemetry-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), rgba(223,255,0,0.5));
+  border-radius: 2px;
+  animation: bar-fill 1.2s var(--ease) forwards;
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 900px) {
+  section { padding: 5rem 0; }
+  .container { padding: 0 1.5rem; }
+  h1 { font-size: clamp(2.8rem, 10vw, 5rem); }
 }
